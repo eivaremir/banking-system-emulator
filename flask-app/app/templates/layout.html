@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}
+    {{title}}
+{% endblock %}
+
+
+{% block navbar %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+        <div class="container">
+            <a href="#" class="navbar-brand"></a>
+            <div>
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item {%if active=='index' %} active {% endif %}"><a href="{{url_for('.index')}}" class="nav-link">Index</a></li>
+                    
+                    {% if current_user.is_authenticated %}
+                        <li class="nav-item {%if active=='tasks' %} active {% endif %}"><a href="{{url_for('.tasks')}}" class="nav-link">Tareas</a></li>
+                        <li class="nav-item {%if active=='new_task' %} active {% endif %}"><a href="{{url_for('.new_task')}}" class="nav-link">Nueva Tarea</a></li>
+                        <li class="nav-item {%if active=='profile' %} active {% endif %}"><a href="{{url_for('.profile')}}" class="nav-link">Profile</a></li>
+                        <li class="nav-item {%if active=='logout' %} active {% endif %}"><a href="{{url_for('.logout')}}" class="nav-link">Logout</a></li>
+                    {% else %}
+                        <li class="nav-item {%if active=='login' %} active {% endif %}"><a href="{{url_for('.login')}}" class="nav-link">Login</a></li>
+                        <li class="nav-item {%if active=='register' %} active {% endif %}"><a href="{{url_for('.register')}}" class="nav-link">Register</a></li>
+                    {% endif %}
+                    
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+{% endblock %}
+
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <br>
+        <!-- CAPA DE MENSAJES -->
+        <div class="col-md-12 col-md-offset-1">
+
+            {% with messages = get_flashed_messages(with_categories=True)%}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        {% if category=='error' %}    
+                            <div class="alert alert-danger" role='alert'> {{message}}</div>
+                        {%else%}
+                            <div class="alert alert-success" role='alert'> {{message}}</div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        {% block container %}
+        {% endblock %}
+    </div>
+</div>
+{% endblock %}
