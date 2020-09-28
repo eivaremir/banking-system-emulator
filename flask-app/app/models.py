@@ -23,6 +23,7 @@ class Product(abc.ABC):
   def __init__(self,**kwargs):
     self._id = kwargs['id']
     self._interest_rate = kwargs['interest_rate']
+    
     try:
       self._balance = kwargs['balance']
     except:
@@ -66,17 +67,19 @@ class Product(abc.ABC):
 class SavingAccount(Product):
   def __init__(self,**kwargs): 
     super().__init__(**kwargs)
+    self.type = self.__class__.__name__
   
 class FixedTermDeposit(Product):
   def __init__(self,**kwargs): 
     super().__init__(**kwargs)
+    self.type = self.__class__.__name__
 
 class Loan(Product):
   def __init__(self,**kwargs): 
     super().__init__(**kwargs)
     # duracion del prestamo en meses
     self.length = kwargs['length']
-
+    self.type = self.__class__.__name__
     # base del calculo
     self.base = kwargs['base']
   def to_dict(self):
@@ -90,6 +93,7 @@ class Loan(Product):
 class CreditCard(Product):
   def __init__(self,**kwargs): 
     super().__init__(**kwargs)
+    self.type = self.__class__.__name__
 
 class Client():
   def __init__(self, **kwargs):
@@ -124,14 +128,16 @@ class Client():
                 id = str(client_deposits.iloc[i].id),
                 interest_rate = client_deposits.iloc[i].interest_rate,
                 balance = float(client_deposits.iloc[i].balance),
-                owner = client_deposits.iloc[i].owner
+                owner = client_deposits.iloc[i].owner,
+                type = client_deposits.iloc[i].type
             ))
         if eval(client_deposits.iloc[i].type) == FixedTermDeposit:
             client_products.append(FixedTermDeposit(
                 id = str(client_deposits.iloc[i].id),
                 interest_rate = client_deposits.iloc[i].interest_rate,
                 balance = float(client_deposits.iloc[i].balance),
-                owner = client_deposits.iloc[i].owner
+                owner = client_deposits.iloc[i].owner,
+                type = client_deposits.iloc[i].type
             ))
     for i in range(len(client_loans)):
 
@@ -141,7 +147,8 @@ class Client():
                 balance = float(client_loans.iloc[i].balance),
                 owner = client_loans.iloc[i].owner,
                 length = client_loans.iloc[i].length,
-                base = client_loans.iloc[i].base
+                base = client_loans.iloc[i].base,
+                type = client_deposits.iloc[i].type
         ))
     return client_products
     
