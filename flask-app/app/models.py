@@ -1,10 +1,164 @@
 #from . import db # import from module app
 from werkzeug.security import generate_password_hash, check_password_hash
 import datetime
-from flask_login import UserMixin
+import random
+import abc
+#from flask_login import UserMixin
 
+prueba = lambda s: s if (len(df_transactions[df_transactions['id']==s])) == 0 else prueba(random.choice(range(100000,999999)))
 def showPasswordHash(value):
     return generate_password_hash(value)
+
+class Product(abc.ABC):
+  @abc.abstractmethod
+  def __init__(self,**kwargs):
+    self._id = kwargs['id']
+    self._interest_rate = kwargs['interest_rate']
+    self._balance = 0.00
+  @property
+  def interest_rate(self):
+    return self._interest_rate
+  @property
+  def id(self):
+    return self._id
+  @property
+  def balance(self):
+    return self._balance
+
+  def to_dict(self):
+    return {
+      'id': self._id,
+      'interest_rate': self._interest_rate,
+      'balance': self.balance
+    }
+  @classmethod
+  def getProductBalance(**kwargs):
+    id = kwargs['id']
+
+
+  def __repr__(self):
+    return self.__class__.__name__+"("+self._id+", interest_rate="+str(self._interest_rate)+", Balance ="+str(self._balance)+")"
+
+class SavingAccount(Product):
+  def __init__(self,**kwargs): 
+    super().__init__(**kwargs)
+  
+class FixedTermDeposit(Product):
+  def __init__(self,**kwargs): 
+    super().__init__(**kwargs)
+
+class Loan(Product):
+  def __init__(self,**kwargs): 
+    super().__init__(**kwargs)
+    # duracion del prestamo en meses
+    self.length = kwargs['length']
+
+    # base del calculo
+    self.base = kwargs['base']
+  def to_dict(self):
+    d1 = super().to_dict()
+    d2 = {
+        "length":self.length,
+        "base":self.base
+    }
+    return {**d1,**d2}
+
+class CreditCard(Product):
+  def __init__(self,**kwargs): 
+    super().__init__(**kwargs)
+
+class Client():
+  def __init__(self, **kwargs):
+    self.id = kwargs['id']
+    self.name = kwargs['name']
+    self.products = kwargs['products']
+  def __repr__(self):
+    return "Client("+self.id+", "+self.name+", products="+str(len(self.products))+")"
+
+class Transaction():
+  def __init__(self,**kwargs):
+    self._id = kwargs['id']
+    #Dr/Cr
+    self.nature = kwargs['nature']
+    self.accounting_date = kwargs['date']
+    self.amount = kwargs['amt']
+    self.product = kwargs['product']
+    self.mvt = kwargs['mvt']
+    
+  def __repr__(self):
+    return self.__class__.__name__+"("+str(self._id)+","+self.accounting_date.strftime("%A, %B %d %Y")+", "+self.nature+", "+str(self.amount) +")"
+  def to_dict(self):
+    return {
+      'id': self._id,
+      'nature': self.nature,
+      'accounting_date':self.accounting_date,
+      'amount':self.amount,
+      'product':self.product,
+      'mvt': self.mvt
+    }
+
+class Transfer():
+  def __init__(self, **kwargs):
+    self.to = kwargs['to']
+    self.From = kwargs['from']
+    self.amount = kwargs['amount']
+    self._id = kwargs['id']
+
+  def __repr__(self):
+    return self.__class__.__name__+"("+self.to+","+self.From+", "+self._id+", "+self.amount +")"  
+    
+  def to_dict(sefl):
+    return {
+        'to': self.to,
+        'From': self.From,
+        'amount': self.amount,
+        'id': self._id,
+        'date': self.accounting_date
+    }
+  
+  @classmethod
+  def Execute(self, **kwargs):
+    print("Executing Bank Transfer")
+    b1 = df_deposits[df_deposits['id']==kwargs['to']]
+
+    b2 = df_deposits[df_deposits['id']==kwargs['From']]
+    if len(b1) == 0 or len(b2) == 0:
+      print('ERROR')
+    else: 
+      b1 = b1.reset_index()
+      b1 = b1.iloc[0]['balance']
+      b2 = b2.reset_index()
+      b2 = b2.iloc[0]['balance']
+      print("Saldo disponible:",b2)
+      if b2 >= kwargs['amount']:
+        totalb1= b1 + kwargs['amount']
+        totalb2= b2 - kwargs['amount']
+        trans1= Transaction(
+          id = prueba(random.choice(range(100000,999999))),
+          product = kwargs['to'],
+          nature = "Cr",
+          date = datetime.now(),
+          amt = kwargs['amount'],
+          mvt = kwargs['amount'])
+        trans2= Transaction(
+          id = prueba(random.choice(range(100000,999999))),
+          product = kwargs['From'],
+          nature = "Dr",
+          date = datetime.now(),
+          amt = kwargs['amount'],
+          mvt= kwargs['amount']*-1)
+        global df_transactions
+        df_transactions = df_transactions.append(trans1.to_dict(),ignore_index=True )
+        df_transactions = df_transactions.append(trans2.to_dict(),ignore_index=True )
+       
+      else:
+        print("No tienes saldo")
+
+
+    
+      
+
+
 
 '''
 class Task(db.Model):
