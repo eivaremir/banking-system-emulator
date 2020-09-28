@@ -20,9 +20,13 @@ login_manager = LoginManager()
 from .views import page
 
 # import class for db tables
-#from .models import *
+from .models import showPasswordHash
+
 
 from .consts import *
+
+
+
 
 def create_app(config):
     # DEFINIR CONFIGURACIONES DEL SERVIDOR
