@@ -10,6 +10,8 @@ from flask_login import LoginManager
 # GENERAR INSTANCIAS
 app = Flask(__name__)
 
+
+
 bootstrap = Bootstrap(app)
 #mail = Mail()
 csrf = CSRFProtect() # PROTECCION CONTRA ATAQUES CSRF
