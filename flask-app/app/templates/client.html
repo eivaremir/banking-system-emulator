@@ -26,8 +26,8 @@
         <div class="card-body">
           <h5 class="card-title">{{ p.id}}</h5>
           <p class="card-text"><b>Balance:</b> {{ '{:.2f}'.format(Product.getProductBalance(id=int(p.id))) }}</p>
-          <a href="#" class="card-link">Card link</a>
-          <a href="#" class="card-link">Another link</a>
+          <a href="{{ url_for('.statement',id=p.id) }}" class="card-link">Generar estado de cuenta</a>
+          
         </div>
     </div>
     </div>

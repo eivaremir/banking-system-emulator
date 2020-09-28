@@ -50,6 +50,7 @@ def client(id=0):
 @page.route('/statement',methods=['GET','POST'])
 def statement():
     form = AccountStatementForm(request.form)
+    form.id.data = request.args.get('id')
     found = False
     balance = 0.00
     statement= ''
