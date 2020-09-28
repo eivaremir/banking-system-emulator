@@ -3,6 +3,7 @@ from flask import render_template, request  # render form fields, handle server 
 from flask import flash
 from flask import redirect, url_for # funciones de redireccionamiento
 from flask import abort #lanzar error 404
+from .forms import AccountStatementForm
 #from .forms import LoginForm, RegisterForm, TaskForm
 #from .models import *
 
@@ -15,8 +16,12 @@ from . import login_manager
 
 
 
+from .functions import *
 
 page = Blueprint('page',__name__)
+
+
+
 
 @login_manager.user_loader
 def load_user(id):
@@ -31,6 +36,18 @@ def page_not_found(error):
 def index():
     return render_template('index.html',title='Index',active='index')
 
+
+@page.route('/statement',methods=['GET','POST'])
+def statement():
+    form = AccountStatementForm(request.form)
+    found = False
+    if request.method == 'POST' and form.validate():
+        found = True
+        statement = getAccountStatement(product=int(form.id.data),start=form.From.data,end=form.to.data)
+        
+    return render_template('statement.html',title='Estados de cuenta',active='index',form=form,found=found,statement=statement, len=len,range=range)
+
+###############################################################################33333
 @page.route("/profile")
 @login_required
 def profile():

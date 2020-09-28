@@ -1,8 +1,6 @@
 #from . import db # import from module app
 from werkzeug.security import generate_password_hash, check_password_hash
-
 import datetime
-
 from flask_login import UserMixin
 
 def showPasswordHash(value):
