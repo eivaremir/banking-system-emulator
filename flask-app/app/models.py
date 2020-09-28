@@ -1,6 +1,6 @@
 #from . import db # import from module app
 from werkzeug.security import generate_password_hash, check_password_hash
-import datetime
+from datetime import datetime
 import random
 import abc
 import string
@@ -139,14 +139,14 @@ class Transfer():
         totalb1= b1 + kwargs['amount']
         totalb2= b2 - kwargs['amount']
         trans1= Transaction(
-          id = IDinTable(random.choice(range(100000,999999))),
+          id = id_in_table(random.choice(range(100000,999999))),
           product = kwargs['to'],
           nature = "Cr",
           date = datetime.now(),
           amt = kwargs['amount'],
           mvt = kwargs['amount'])
         trans2= Transaction(
-          id = IDinTable(random.choice(range(100000,999999))),
+          id = id_in_table(random.choice(range(100000,999999))),S
           product = kwargs['From'],
           nature = "Dr",
           date = datetime.now(),

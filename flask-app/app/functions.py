@@ -5,11 +5,7 @@ from models import *
 
 df_transactions = pd.read_csv("flask-app/app/db/transactions.csv",parse_dates=['accounting_date'])
 df_deposits = pd.read_csv("flask-app/app/db/deposits.csv")
-ids = []
-product_ids = []
-products = []
-transactions = []
-transaction_ids = []
+
 def getAccountStatement(**kwargs):
   
   try: kwargs['product']
@@ -33,7 +29,7 @@ def getAccountStatement(**kwargs):
   df = df.drop(['index'],axis=1)
   return df
 
-IDinTable = lambda s: s if (len(df_transactions[df_transactions['id']==s])) == 0 else prueba(random.choice(range(100000,999999)))
+id_in_table = lambda s: s if (len(df_transactions[df_transactions['id']==s])) == 0 else prueba(random.choice(range(100000,999999)))
 
 def generate_product_ids():
   id = ''
