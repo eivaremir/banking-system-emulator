@@ -14,7 +14,7 @@ function createWindow () {
 
   // and load the index.html of the app.
   mainWindow.loadURL('http://127.0.1.1:5999/')
-
+  console.log("Page loaded")
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
 }

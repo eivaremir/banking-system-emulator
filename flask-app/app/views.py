@@ -36,16 +36,28 @@ def page_not_found(error):
 def index():
     return render_template('index.html',title='Index',active='index')
 
-
+@page.route("/client/")
+@page.route("/client/<id>")
+def client(id=0):
+    if id == 0:
+        print(load_clients().iloc[0])
+        return render_template('client.html',title="Clientes",active="client",clients=load_clients(),range=range,len=len)
+    else:
+        client = Client.getClientData(client=id)
+        products = Client.getClientProducts(client=id)
+        return render_template('client.html',title="Clientes",active="client",client=client,id=id,products = products,range=range,len=len)
 @page.route('/statement',methods=['GET','POST'])
 def statement():
     form = AccountStatementForm(request.form)
     found = False
+    balance = 0.00
+    statement= ''
     if request.method == 'POST' and form.validate():
         found = True
         statement = getAccountStatement(product=int(form.id.data),start=form.From.data,end=form.to.data)
-        
-    return render_template('statement.html',title='Estados de cuenta',active='index',form=form,found=found,statement=statement, len=len,range=range)
+        balance = Product.getProductBalance(id=int(form.id.data))
+        return render_template('statement.html',title='Estados de cuenta',active='statement',form=form,balance=balance,found=found,statement=statement, len=len,range=range)
+    return render_template('statement.html',title='Estados de cuenta',active='statement',form=form)
 
 ###############################################################################33333
 @page.route("/profile")

@@ -4,11 +4,15 @@ from datetime import datetime
 import random
 import abc
 import string
-from functions import *
+try:
+  from .functions import *
+  DATABASE_DIRECTORY = os.getcwd()+"/app/db/"
+except:
+  from functions import *
+  DATABASE_DIRECTORY = os.getcwd()+"/db/"
 #from flask_login import UserMixin
-
-df_transactions = pd.read_csv("flask-app/app/db/transactions.csv",parse_dates=['accounting_date'])
-df_deposits = pd.read_csv("flask-app/app/db/deposits.csv")
+df_transactions = pd.read_csv(DATABASE_DIRECTORY+'transactions.csv',parse_dates=['accounting_date'])
+df_deposits = pd.read_csv(DATABASE_DIRECTORY+"deposits.csv")
 
 
 def showPasswordHash(value):
@@ -19,7 +23,14 @@ class Product(abc.ABC):
   def __init__(self,**kwargs):
     self._id = kwargs['id']
     self._interest_rate = kwargs['interest_rate']
-    self._balance = 0.00
+    try:
+      self._balance = kwargs['balance']
+    except:
+      self._balance = 0.00
+    self._owner = kwargs['owner']
+  @property
+  def owner(self):
+    return self._owner
   @property
   def interest_rate(self):
     return self._interest_rate
@@ -34,11 +45,19 @@ class Product(abc.ABC):
     return {
       'id': self._id,
       'interest_rate': self._interest_rate,
-      'balance': self.balance
+      'balance': self.balance,
+      'owner':self._owner,
+      'type':self.__class__.__name__
     }
   @classmethod
-  def getProductBalance(**kwargs):
+  def getProductBalance(self,**kwargs):
+    df_transactions = pd.read_csv(DATABASE_DIRECTORY+'transactions.csv',parse_dates=['accounting_date'])
+    df_deposits = pd.read_csv(DATABASE_DIRECTORY+"deposits.csv")
+
     id = kwargs['id']
+    
+    return df_deposits[df_deposits.id == id].iloc[0]['balance']
+
 
 
   def __repr__(self):
@@ -79,6 +98,53 @@ class Client():
     self.products = kwargs['products']
   def __repr__(self):
     return "Client("+self.id+", "+self.name+", products="+str(len(self.products))+")"
+  def to_dict(self):
+    return {
+      "id":self.id,
+      "client_name":self.name
+    }
+  @classmethod 
+  def getClientData(self,**kwargs):
+    df_clients =pd.read_csv(DATABASE_DIRECTORY+"clients.csv")
+    return df_clients[df_clients.id == kwargs['client']]
+
+  @classmethod
+  def getClientProducts(self,**kwargs):
+    df_deposits = pd.read_csv(DATABASE_DIRECTORY+"deposits.csv")
+    df_loans = pd.read_csv(DATABASE_DIRECTORY+"loans.csv")
+
+    client_deposits = df_deposits[df_deposits.owner == kwargs['client']]
+    client_loans = df_loans[df_loans.owner==kwargs['client']]
+
+    client_products = []
+    for i in range(len(client_deposits)):
+        #print(client_deposits.iloc[i].type)
+        if eval(client_deposits.iloc[i].type) == SavingAccount:
+            client_products.append(SavingAccount(
+                id = str(client_deposits.iloc[i].id),
+                interest_rate = client_deposits.iloc[i].interest_rate,
+                balance = float(client_deposits.iloc[i].balance),
+                owner = client_deposits.iloc[i].owner
+            ))
+        if eval(client_deposits.iloc[i].type) == FixedTermDeposit:
+            client_products.append(FixedTermDeposit(
+                id = str(client_deposits.iloc[i].id),
+                interest_rate = client_deposits.iloc[i].interest_rate,
+                balance = float(client_deposits.iloc[i].balance),
+                owner = client_deposits.iloc[i].owner
+            ))
+    for i in range(len(client_loans)):
+
+        client_products.append(Loan(
+                id = str(client_loans.iloc[i].id),
+                interest_rate = client_loans.iloc[i].interest_rate,
+                balance = float(client_loans.iloc[i].balance),
+                owner = client_loans.iloc[i].owner,
+                length = client_loans.iloc[i].length,
+                base = client_loans.iloc[i].base
+        ))
+    return client_products
+    
 
 class Transaction():
   def __init__(self,**kwargs):
@@ -146,7 +212,7 @@ class Transfer():
           amt = kwargs['amount'],
           mvt = kwargs['amount'])
         trans2= Transaction(
-          id = id_in_table(random.choice(range(100000,999999))),S
+          id = id_in_table(random.choice(range(100000,999999))),
           product = kwargs['From'],
           nature = "Dr",
           date = datetime.now(),

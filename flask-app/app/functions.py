@@ -1,13 +1,22 @@
 import pandas as pd
 import random
-from models import *
-
-
-df_transactions = pd.read_csv("flask-app/app/db/transactions.csv",parse_dates=['accounting_date'])
-df_deposits = pd.read_csv("flask-app/app/db/deposits.csv")
-
-def getAccountStatement(**kwargs):
+import os
+print(os.getcwd())
+try:
+  from .models import *
   
+  DATABASE_DIRECTORY = os.getcwd()+"/app/db/"
+except:
+  from models import *
+  DATABASE_DIRECTORY = os.getcwd()+"/db/"
+
+def load_clients():
+  print("Getting Clients...")
+  return pd.read_csv(DATABASE_DIRECTORY+"clients.csv")
+def getAccountStatement(**kwargs):
+  df_transactions = pd.read_csv(DATABASE_DIRECTORY+'transactions.csv',parse_dates=['accounting_date'])
+  df_deposits = pd.read_csv(DATABASE_DIRECTORY+"deposits.csv")
+
   try: kwargs['product']
   except: print("A product id is required")
 
