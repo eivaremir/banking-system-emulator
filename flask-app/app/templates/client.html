@@ -15,13 +15,19 @@
     <div class="row row-cols-1 row-cols-md-3">
     {% for p in products %}
     <div class="col mb-4">
-    <div class="text-white bg-primary mb-3" style="width: 18rem;">
-        <div class="card-header">{{ p.type }}</div>
+
+    <div class="card" style="width: 18rem;">
+        <div class="card-header">
+            
+            {% if p.type == "SavingAccount" %}Cuenta de Ahorros{% endif %}
+            {% if p.type == "Loan" %}Préstamo{% endif %}
+            {% if p.type == "FixedTermDeposit" %}Depósito a plazo fijo{% endif %}
+        </div>
         <div class="card-body">
           <h5 class="card-title">{{ p.id}}</h5>
-          <p class="card-text">Balance: </p>
-          <a href="#" class="card-link text-white">Card link</a>
-          <a href="#" class="card-link text-white">Another link</a>
+          <p class="card-text"><b>Balance:</b> {{ '{:.2f}'.format(Product.getProductBalance(id=int(p.id))) }}</p>
+          <a href="#" class="card-link">Card link</a>
+          <a href="#" class="card-link">Another link</a>
         </div>
     </div>
     </div>
@@ -35,6 +41,7 @@
             <tr>
               <th scope="col">#</th>
               <th scope="col">Nombre</th>
+              <th scope="col">Productos</th>
               <th scope="col">Acciones</th>
             </tr>
         </thead>
@@ -45,6 +52,7 @@
                 <tr>
                     <th scope="row">{{ clients.iloc[i].id }}</th>
                     <td>{{ clients.iloc[i].client_name }}</td>
+                    <td>{{ len(Client.getClientProducts(client=clients.iloc[i].id ) )}}</td>
                     <td>
                         <a class="btn btn-primary" href="{{url_for('.client',id=clients.iloc[i].id )}}">Ver productos</a>
                         <a class="btn btn-warning" href="{{url_for('.client',id=clients.iloc[i].id )}}">Mantenimiento de datos</a>

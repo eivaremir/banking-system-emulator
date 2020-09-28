@@ -40,12 +40,13 @@ def index():
 @page.route("/client/<id>")
 def client(id=0):
     if id == 0:
-        print(load_clients().iloc[0])
-        return render_template('client.html',title="Clientes",active="client",clients=load_clients(),range=range,len=len)
+        
+        return render_template('client.html',title="Clientes",active="client",clients=load_clients(),range=range,len=len,Client=Client)
     else:
         client = Client.getClientData(client=id)
         products = Client.getClientProducts(client=id)
-        return render_template('client.html',title="Clientes",active="client",client=client,id=id,products = products,range=range,len=len)
+        
+        return render_template('client.html',title="Clientes",active="client",client=client,id=id,products = products,int = int,Product = Product,range=range,len=len)
 @page.route('/statement',methods=['GET','POST'])
 def statement():
     form = AccountStatementForm(request.form)
@@ -56,6 +57,7 @@ def statement():
         found = True
         statement = getAccountStatement(product=int(form.id.data),start=form.From.data,end=form.to.data)
         balance = Product.getProductBalance(id=int(form.id.data))
+
         return render_template('statement.html',title='Estados de cuenta',active='statement',form=form,balance=balance,found=found,statement=statement, len=len,range=range)
     return render_template('statement.html',title='Estados de cuenta',active='statement',form=form)
 

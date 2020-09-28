@@ -148,7 +148,7 @@ class Client():
                 owner = client_loans.iloc[i].owner,
                 length = client_loans.iloc[i].length,
                 base = client_loans.iloc[i].base,
-                type = client_deposits.iloc[i].type
+                type = client_loans.iloc[i].type
         ))
     return client_products
     
