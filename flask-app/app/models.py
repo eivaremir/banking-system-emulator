@@ -54,10 +54,15 @@ class Product(abc.ABC):
   def getProductBalance(self,**kwargs):
     df_transactions = pd.read_csv(DATABASE_DIRECTORY+'transactions.csv',parse_dates=['accounting_date'])
     df_deposits = pd.read_csv(DATABASE_DIRECTORY+"deposits.csv")
-
+    df_loans = pd.read_csv(DATABASE_DIRECTORY+"loans.csv")
     id = kwargs['id']
     
-    return df_deposits[df_deposits.id == id].iloc[0]['balance']
+    try: balance = df_deposits[df_deposits.id == id].iloc[0]['balance']
+    except: pass
+    try: balance = df_loans[df_loans.id == id].iloc[0]['balance']
+    except: pass
+
+    return balance
 
 
 
