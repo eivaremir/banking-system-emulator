@@ -3,9 +3,14 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import datetime
 import random
 import abc
+import string
+from functions import *
 #from flask_login import UserMixin
 
-prueba = lambda s: s if (len(df_transactions[df_transactions['id']==s])) == 0 else prueba(random.choice(range(100000,999999)))
+df_transactions = pd.read_csv("flask-app/app/db/transactions.csv",parse_dates=['accounting_date'])
+df_deposits = pd.read_csv("flask-app/app/db/deposits.csv")
+
+
 def showPasswordHash(value):
     return generate_password_hash(value)
 
@@ -134,14 +139,14 @@ class Transfer():
         totalb1= b1 + kwargs['amount']
         totalb2= b2 - kwargs['amount']
         trans1= Transaction(
-          id = prueba(random.choice(range(100000,999999))),
+          id = IDinTable(random.choice(range(100000,999999))),
           product = kwargs['to'],
           nature = "Cr",
           date = datetime.now(),
           amt = kwargs['amount'],
           mvt = kwargs['amount'])
         trans2= Transaction(
-          id = prueba(random.choice(range(100000,999999))),
+          id = IDinTable(random.choice(range(100000,999999))),
           product = kwargs['From'],
           nature = "Dr",
           date = datetime.now(),
