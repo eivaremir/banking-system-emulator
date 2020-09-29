@@ -1,7 +1,7 @@
 import pandas as pd
 import random
 import os
-from model.ipynb* import *
+#from model.ipynb* import *
 print(os.getcwd())
 try:
   from .models import *

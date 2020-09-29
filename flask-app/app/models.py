@@ -5,7 +5,7 @@ from datetime import datetime
 import random
 import abc
 import string
-from model.ipynb* import *
+#from model.ipynb* import *
 try:
   from .functions import *
   DATABASE_DIRECTORY = os.getcwd()+"/app/db/"

@@ -21,8 +21,7 @@
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" href="{{url_for('.statement')}}">Estados de cuenta</a>
                                 <a class="dropdown-item" href="{{url_for('.client')}}">Clientes</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#">Transacciones</a>
+                                
                             </div>
                         </li>
                         <li class="nav-item dropdown  {%if active=='transfer' %} active {% endif %}">
@@ -30,7 +29,10 @@
                             Acciones
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="#">Transacciones</a>
+                                <h6 class="dropdown-header">Transacciones</h6>
+                                <a class="dropdown-item" href="#">Transferencia</a>
+                                <h6 class="dropdown-header">Crear productos</h6>
+                                <a class="dropdown-item" href=".url('.create_loan')">Préstamo</a>
                             </div>
                         </li>   
                         <li class="nav-item {%if active=='profile' %} active {% endif %}"><a href="{{url_for('.profile')}}" class="nav-link">Profile</a></li>
