@@ -10,11 +10,10 @@
         <a href="{{url_for('.index')}}" class="navbar-brand">Banking System</a>
         <div class="collapse navbar-collapse  " id="navbarTogglerDemo01">
             
-            <div class="container">
                 <ul class="navbar-nav ml-auto">
                     
                     
-                    
+                    {% if current_user.is_authenticated %}
                         <li class="nav-item dropdown  {%if active=='statement' or  active=='client' %} active {% endif %}">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Consultas
@@ -36,17 +35,16 @@
                         </li>   
                         <li class="nav-item {%if active=='profile' %} active {% endif %}"><a href="{{url_for('.profile')}}" class="nav-link">Profile</a></li>
                         <li class="nav-item {%if active=='logout' %} active {% endif %}"><a href="{{url_for('.logout')}}" class="nav-link">Logout</a></li>
-                    
+                    {% else %}
                         <li class="nav-item {%if active=='login' %} active {% endif %}"><a href="{{url_for('.login')}}" class="nav-link">Login</a></li>
-                        <li class="nav-item {%if active=='register' %} active {% endif %}"><a href="{{url_for('.register')}}" class="nav-link">Register</a></li>
-                        <!--{% if current_user.is_authenticated %}!-->
-                        <!--{% else %}!-->
-                        <!--{% endif %}!-->
+                        
+                        
+                        
+                        {% endif %}
 
                        
                     
                 </ul>
-            </div>
         </div>
     </nav>
 

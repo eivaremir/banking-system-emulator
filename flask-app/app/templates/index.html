@@ -1,6 +1,15 @@
 {% extends 'layout.html' %}
 {%block container%}
-    <h2>Bienvenido al sistema bancario</h2>
+
+    <h2>Bienvenido al sistema bancario</h2><br>
+
+    <div class="container">
+        {% if current_user.is_authenticated %}
+        <p>Usuario {{user}}</p>
+        {% else %}
+        <p>Para empezar, <a href="{{ url_for('.login') }}">inicia sesión</a></p>
+        {% endif %}
+    </div>
 {%endblock%}
 
 <!--
