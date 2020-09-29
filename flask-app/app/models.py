@@ -1,5 +1,6 @@
 #from . import db # import from module app
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
 from datetime import datetime
 import random
 import abc
@@ -268,8 +269,40 @@ class Transfer():
     
       
 
+class User(UserMixin):
 
+    # campos de la tabla
+    id = 1
+    username = 'admin'
+    password = 'pbkdf2:sha256:150000$qdu0Y5KT$200e4fb764e337538b096571845b058258fabba32bf20a94659768779bd10113'
+    
+    def verify_user(self,user):
+      return user==self.username
+    def verify_password(self,p_password):
+        return check_password_hash(self.password, p_password)
+    @property
+    def passwd(self):
+        pass
+    @passwd.setter
+    def passwd(self, value):
+        self.password = generate_password_hash(value)
 
+    def __str__(self):
+        return self.username
+    
+    
+    '''
+    @classmethod
+    def get_by_username(cls, username):
+        return User.query.filter_by(username=username).first()
+    @classmethod
+    def get_by_email(cls, email):
+        return User.query.filter_by(email=email).first()
+    '''
+    @classmethod
+    def get_by_id(cls, id):
+        return 1
+    
 '''
 class Task(db.Model):
     __tablename_ = 'tasks'

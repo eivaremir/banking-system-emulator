@@ -22,6 +22,11 @@ class AccountStatementForm(Form):
     ])
     From = DateTimeField('Desde',format='%d-%m-%Y')
     to =DateTimeField('Hasta',format='%d-%m-%Y')
+class LoginForm(Form):
+    #campos con las respectivas validaciones
+    username = StringField('Username',[validators.length(min=4,max=50,message='El nombre de usuario debe ser mayor a 4 caracteres')])
+    password = PasswordField('Password',[validators.Required()])
+
 '''
 class TaskForm(Form):
     title = StringField('Titulo',[
@@ -33,10 +38,6 @@ class TaskForm(Form):
         validators.DataRequired(message='La descripción es requerida')
     ], render_kw={'rows':5})
 
-class LoginForm(Form):
-    #campos con las respectivas validaciones
-    username = StringField('Username',[validators.length(min=8,max=50,message='El nombre de usuario debe ser mayor a 8 caracteres')])
-    password = PasswordField('Password',[validators.Required()])
 
 class RegisterForm(Form):
     #campos con las respectivas validaciones

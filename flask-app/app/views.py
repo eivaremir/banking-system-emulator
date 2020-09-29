@@ -3,14 +3,15 @@ from flask import render_template, request  # render form fields, handle server 
 from flask import flash
 from flask import redirect, url_for # funciones de redireccionamiento
 from flask import abort #lanzar error 404
-from .forms import AccountStatementForm
+from .forms import AccountStatementForm, LoginForm
+
 #from .forms import LoginForm, RegisterForm, TaskForm
 #from .models import *
 
 
 
 from flask_login import login_user, logout_user, login_required, current_user
-#from .consts import * 
+from .consts import * 
 #from .email import *
 from . import login_manager
 
@@ -25,16 +26,41 @@ page = Blueprint('page',__name__)
 
 @login_manager.user_loader
 def load_user(id):
-    return User.get_by_id(id)
+    return User()
 
 
 @page.app_errorhandler(404)
 def page_not_found(error):
     return render_template('errors/404.html'),404 # retorna status 200 de exito
 
+@page.route("/login",methods=['GET','POST']) # hablitiar metodos para mostrar y crear sesión
+def login():
+    # request.form es un tipo de dato Form definido en wtforms (Archivo forms.py) con los valores recibidos de un formulario si esta peticion es de tipo post
+    # instancia del formulario, con valores del usuario
+    if current_user.is_authenticated:
+        return redirect(url_for('.index'))
+    form = LoginForm(request.form) 
+    
+    # if the request to the server is post and validations are correct
+    if request.method == 'POST' and form.validate(): 
+        user = User()
+        if user.verify_password(form.password.data) and user.verify_user(form.username.data):
+            login_user(user)
+            flash(LOGIN)
+            if current_user.is_authenticated:
+                return redirect(url_for('.index'))
+        else:
+            flash(ERROR_USER_PASSWORD,'error')
+        #print("Nueva sesión creada con los valores: " + form.username.data +" "+ form.password.data + " resultado: "+str(current_user.is_authenticated))
+    print('Auth: '+str(current_user.is_authenticated))
+    
+    return render_template("login.html",title='Login', form=form, active = 'login')
+
 @page.route('/')
 def index():
-    return render_template('index.html',title='Index',active='index')
+    if current_user.is_authenticated:
+        return render_template('index.html',title='Inicio',active='index',user=current_user)
+    return render_template('index.html',title='Inicio',active='index')
 
 @page.route("/client/")
 @page.route("/client/<id>")
@@ -62,6 +88,14 @@ def statement():
         return render_template('statement.html',title='Estados de cuenta',active='statement',form=form,balance=balance,found=found,statement=statement, len=len,range=range)
     return render_template('statement.html',title='Estados de cuenta',active='statement',form=form)
 
+
+@page.route("/logout")
+def logout():
+    print('Auth: '+str(current_user.is_authenticated))
+    logout_user()
+    print('Auth: '+str(current_user.is_authenticated))
+    flash(LOGOUT)
+    return redirect(url_for('.login'))
 ###############################################################################33333
 @page.route("/profile")
 @login_required
@@ -75,13 +109,7 @@ def profile_id(profile_id):
     return render_template("profile/view.html",user=user,active='profile')
     
 
-@page.route("/logout")
-def logout():
-    print('Auth: '+str(current_user.is_authenticated))
-    logout_user()
-    print('Auth: '+str(current_user.is_authenticated))
-    flash(LOGOUT)
-    return redirect(url_for('.login'))
+
 
 @page.route("/tasks")
 @page.route("/tasks/<int:page>")
@@ -160,25 +188,3 @@ def register():
     print('Auth: '+str(current_user.is_authenticated))
     return render_template("register.html",title='Register', form=form, active='register')    
 
-@page.route("/login",methods=['GET','POST']) # hablitiar metodos para mostrar y crear sesión
-def login():
-    # request.form es un tipo de dato Form definido en wtforms (Archivo forms.py) con los valores recibidos de un formulario si esta peticion es de tipo post
-    # instancia del formulario, con valores del usuario
-    if current_user.is_authenticated:
-        return redirect(url_for('.tasks'))
-    form = LoginForm(request.form) 
-    
-    # if the request to the server is post and validations are correct
-    if request.method == 'POST' and form.validate(): 
-        user = User.get_by_username(form.username.data)
-        if user and user.verify_password(form.password.data):
-            login_user(user)
-            flash(LOGIN)
-            if current_user.is_authenticated:
-                return redirect(url_for('.tasks'))
-        else:
-            flash(ERROR_USER_PASSWORD,'error')
-        #print("Nueva sesión creada con los valores: " + form.username.data +" "+ form.password.data + " resultado: "+str(current_user.is_authenticated))
-    print('Auth: '+str(current_user.is_authenticated))
-    
-    return render_template("login.html",title='Login', form=form, active = 'login')
