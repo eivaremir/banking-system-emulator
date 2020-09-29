@@ -4,6 +4,7 @@ from datetime import datetime
 import random
 import abc
 import string
+from model.ipynb* import *
 try:
   from .functions import *
   DATABASE_DIRECTORY = os.getcwd()+"/app/db/"
@@ -233,7 +234,33 @@ class Transfer():
         global df_transactions
         df_transactions = df_transactions.append(trans1.to_dict(),ignore_index=True )
         df_transactions = df_transactions.append(trans2.to_dict(),ignore_index=True )
-       
+        if kwargs['to'] == Product_in_loan(kwargs['to']):
+          prodct1 = Product(
+              id = kwargs['to'],
+              interest_rate = GetInteresLOANS(kwargs['to']),
+              balance = totalb1,
+              length = GetLengthLOANS(kwargs['to']),
+              base = GetBaseLOANS(kwargs['to']))
+          df_loans = df_loans.append(product1.to_dict(),ignore_index=True)
+        elif kwargs['to'] == Product_in_deposits(kwargs['to']):
+          product1 = Product(
+              id = kwargs['to'],
+              interest_rate = GetInteres(kwargs['to']),
+              balance = totalb1)
+          df_deposits = df_deposits.append(product1.to_dict(),ignore_index=True)
+
+        elif kwargs['FROM'] == Product_in_deposits(kwargs['FROM']):    
+          product2 = Product(
+              id = kwargs['FROM'],
+              interest_rate = GetInteres(kwargs['FROM']),
+              balance = totalb2)
+          df_deposits = df_deposits.append(product2.to_dict(),ignore_index=True)
+        elif kwargs['FROM'] == Product_in_CC(kwargs['FROM']): 
+          product2 = Product(
+              id = kwargs['FROM'],
+              interest_rate = GetInteresCC(kwargs['FROM']),
+              balance = totalb2)
+          df_CreditCrad = df_CreditCrad.append(product2.to_dict(),ignore_index=True)
       else:
         print("No tienes saldo")
 
