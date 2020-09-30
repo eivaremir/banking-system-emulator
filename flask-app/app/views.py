@@ -3,7 +3,7 @@ from flask import render_template, request  # render form fields, handle server 
 from flask import flash
 from flask import redirect, url_for # funciones de redireccionamiento
 from flask import abort #lanzar error 404
-from .forms import AccountStatementForm, LoginForm
+from .forms import AccountStatementForm, LoginForm, LoanCreationForm
 
 #from .forms import LoginForm, RegisterForm, TaskForm
 #from .models import *
@@ -22,7 +22,9 @@ from .functions import *
 page = Blueprint('page',__name__)
 
 
-
+##############################################################
+# DEFINICION DE PROCEDIMIENTOS PARA INICIO Y CERRADO DE SESION
+##############################################################
 
 @login_manager.user_loader
 def load_user(id):
@@ -56,6 +58,19 @@ def login():
     
     return render_template("login.html",title='Login', form=form, active = 'login')
 
+
+@page.route("/logout")
+def logout():
+    print('Auth: '+str(current_user.is_authenticated))
+    logout_user()
+    print('Auth: '+str(current_user.is_authenticated))
+    flash(LOGOUT)
+    return redirect(url_for('.login'))
+
+##############################################################
+# DEFINICION DE VISTAS
+##############################################################
+
 @page.route('/')
 def index():
     if current_user.is_authenticated:
@@ -88,15 +103,15 @@ def statement():
         return render_template('statement.html',title='Estados de cuenta',active='statement',form=form,balance=balance,found=found,statement=statement, len=len,range=range)
     return render_template('statement.html',title='Estados de cuenta',active='statement',form=form)
 
-
-@page.route("/logout")
-def logout():
-    print('Auth: '+str(current_user.is_authenticated))
-    logout_user()
-    print('Auth: '+str(current_user.is_authenticated))
-    flash(LOGOUT)
-    return redirect(url_for('.login'))
-###############################################################################33333
+@page.route('/create/<product>',methods=['GET','POST'])
+def create(product):
+    form = LoanCreationForm(request.form)
+    if bool(request.args.get('table')):
+        form.owner.data = 'abc'
+    return render_template('create/loan.html',form = form)
+##############################################################
+# FIN
+##############################################################
 @page.route("/profile")
 @login_required
 def profile():

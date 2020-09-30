@@ -1,6 +1,6 @@
 from wtforms import Form
 from wtforms import validators #validaciones de formularios
-from wtforms import StringField, PasswordField, BooleanField, HiddenField, TextAreaField,DateTimeField
+from wtforms import StringField, PasswordField, BooleanField, HiddenField, TextAreaField,DateTimeField,SelectField
 from wtforms.fields.html5 import EmailField
 
 #from .models import User
@@ -26,6 +26,15 @@ class LoginForm(Form):
     #campos con las respectivas validaciones
     username = StringField('Username',[validators.length(min=4,max=50,message='El nombre de usuario debe ser mayor a 4 caracteres')])
     password = PasswordField('Password',[validators.Required()])
+
+class ProductCreationForm(Form):
+    owner = StringField('Número de Cliente',[validators.length(min=4,max=50,message='El cliente debe tener más de 4 dígitos')])
+    product = StringField('Producto',[validators.length(min=4,max=50,message='El cliente debe tener más de 4 dígitos')])
+
+class LoanCreationForm(ProductCreationForm,Form):
+    interest_rate = StringField('Tasa de interés (en %)',[validators.length(min=1,max=3,message='La tasa de interés no puede tener entre 3 y 1 caracter')])
+    length = StringField('Duración (en meses)',[validators.length(min=1,message='La duración debe tener al menos 1 caracter')])
+    base = SelectField('Base',choices=[360,365])
 
 '''
 class TaskForm(Form):

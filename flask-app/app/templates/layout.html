@@ -32,7 +32,7 @@
                                 <h6 class="dropdown-header">Transacciones</h6>
                                 <a class="dropdown-item" href="#">Transferencia</a>
                                 <h6 class="dropdown-header">Crear productos</h6>
-                                <a class="dropdown-item" href=".url('.create_loan')">Préstamo</a>
+                                <a class="dropdown-item" href="{{url_for('.create',product = 'Loan')}}">Préstamo</a>
                             </div>
                         </li>   
                         <li class="nav-item {%if active=='profile' %} active {% endif %}"><a href="{{url_for('.profile')}}" class="nav-link">Profile</a></li>
