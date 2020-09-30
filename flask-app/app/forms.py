@@ -35,6 +35,7 @@ class LoanCreationForm(ProductCreationForm,Form):
     interest_rate = StringField('Tasa de interés (en %)',[validators.length(min=1,max=3,message='La tasa de interés no puede tener entre 3 y 1 caracter')])
     length = StringField('Duración (en meses)',[validators.length(min=1,message='La duración debe tener al menos 1 caracter')])
     base = SelectField('Base',choices=[360,365])
+    amount = StringField('Monto',[validators.length(min=1,message='El monto debe más de 1 caracter')])
 
 '''
 class TaskForm(Form):

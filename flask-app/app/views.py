@@ -106,9 +106,23 @@ def statement():
 @page.route('/create/<product>',methods=['GET','POST'])
 def create(product):
     form = LoanCreationForm(request.form)
+    table = []
+    interests = 0.00
     if bool(request.args.get('table')):
-        form.owner.data = 'abc'
-    return render_template('create/loan.html',form = form)
+        print("Generando Tabla de amortización")
+        print("Tasa:",form.interest_rate.data)
+        print("Monto:",form.amount.data)
+        try:
+            l = Loan(owner = form.owner.data, 
+                    interest_rate = float(form.interest_rate.data),
+                    base = form.base.data,
+                    balance = float(form.balance.data),
+                    length = int(form.length.data),
+                    id = 1)
+            table, interests = l.generate_amortization_table()
+        except:
+            flash("Ocurrió un error")
+    return render_template('create/loan.html',title='Crear Préstamo', form = form,table=table,interests = interests)
 ##############################################################
 # FIN
 ##############################################################

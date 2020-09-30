@@ -5,6 +5,7 @@ from datetime import datetime
 import random
 import abc
 import string
+import numpy as np
 #from model.ipynb* import *
 try:
   from .functions import *
@@ -89,6 +90,14 @@ class Loan(Product):
     self.type = self.__class__.__name__
     # base del calculo
     self.base = kwargs['base']
+
+  
+  def generate_amortization_table(self):
+    arr = np.array([])
+    for i in range(self.length):
+      arr = np.append(arr,(self.balance*(self.interest_rate/100)*30)/self.base)
+    return arr,arr.sum()
+
   def to_dict(self):
     d1 = super().to_dict()
     d2 = {

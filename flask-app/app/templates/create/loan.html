@@ -13,22 +13,22 @@
             <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
             <div class="col-md form-group">
                 <!-- RENDER FIELDS WITH BOOTSTRAP CLASSES -->
-                {{ render_field(form.owner, class='form-control', placeholder='Username') }}
-                {{ render_field(form.product, class='form-control', placeholder='Password') }}
-                {{ render_field(form.interest_rate, class='form-control', placeholder='Password') }}
+                {{ render_field(form.owner, class='form-control') }}
+                {{ render_field(form.interest_rate, class='form-control', placeholder='3.75') }}
+                {{ render_field(form.amount, class='form-control', placeholder='####.##') }}
             </div>
 
             <div class="col-md form-group">
                 <!-- RENDER FIELDS WITH BOOTSTRAP CLASSES -->  
                 
-                {{ render_field(form.length, class='form-control', placeholder='Password') }} 
+                {{ render_field(form.length, class='form-control', placeholder='12') }} 
                 {{ render_field(form.base, class='form-control', placeholder='Password') }}
             </div>
             </div>
         </div>
         
-        <button type="submit" class="btn btn-primary">Crear Préstamo</button>
-        <a href="{{ url_for('.create',product='Loan')}}?table=true" class="btn btn-dark">Generar tabla de amortización</a>
+        <button type="submit" class="btn btn-primary">Desembolsar</button>
+        <a href="{{ url_for('.create',product='Loan',table = True)}}" class="btn btn-dark">Generar tabla de amortización</a>
     </form>
 </div>
 
