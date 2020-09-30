@@ -5,12 +5,12 @@
 
 <div class="col-md-12 col-md-offset-1">
     <h3>Crear Préstamo</h3>
-    <form action="" method="POST">
+    <form action="" method="GET">
 
         <!-- INPUT QUE CONTIENE EL TOKEN, no poner espacios entre "_{}_" -->
         <div class="container">
             <div class="row">
-            <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
+            
             <div class="col-md form-group">
                 <!-- RENDER FIELDS WITH BOOTSTRAP CLASSES -->
                 {{ render_field(form.owner, class='form-control') }}
@@ -27,8 +27,7 @@
             </div>
         </div>
         
-        <button type="submit" class="btn btn-primary">Desembolsar</button>
-        <a href="{{ url_for('.create',product='Loan',table = True)}}" class="btn btn-dark">Generar tabla de amortización</a>
+        <button type="submit" class="btn btn-dark">Generar tabla de amortización</button>
     </form>
 </div>
 

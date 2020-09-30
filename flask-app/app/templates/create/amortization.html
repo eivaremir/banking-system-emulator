@@ -1,0 +1,23 @@
+{% extends 'layout.html' %}
+{% from 'helpers/_forms.html' import render_field %}
+
+{%block container%}
+
+<div class="col-md-12 col-md-offset-1">
+    <h3>Tabla de amortización</h3>
+    <div class="container">
+        <ul class="list-group">
+            <li class="list-group-item active">Préstamo</li>
+            <li class="list-group-item"><b>Capital: </b> {{loan.balance}}</li>
+            <li class="list-group-item"><b>Interes Anual: </b>{{loan.interest_rate}}%</li>
+            <li class="list-group-item"><b>Base: </b>{{loan.base}}</li>
+            <li class="list-group-item"><b>Duración: </b>{{loan.length}}</li>
+          </ul>
+    </div>
+    <br>
+    <form action="" method="POST">
+        <button type="submit" class="btn btn-dark">Desembolsar</button>
+    </form>
+</div>
+
+{%endblock%}
