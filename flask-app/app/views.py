@@ -108,27 +108,25 @@ def create(product):
     form = LoanCreationForm(request.form)
     table = []
     interests = 0.00
-    #print(request.)
-    if request.method == 'GET':
+    print(request.args.get('owner'))
+    if request.method == 'GET' and request.args.get('owner'):
         print("Generando Tabla de amortización")
         print("Tasa:",request.args.get('interest_rate'))
-        print("Monto:",form.amount.data)
-        try:
-            l = Loan(owner = form.owner.data, 
-                    interest_rate = float(request.args.get('interest_rate')),
-                    base = int(request.args.get('base')),
-                    balance = float(request.args.get('amount')),
-                    length = int(request.args.get('length')),
-                    id = 1)
-            try:
-                table, interests = l.generate_amortization_table()
-                print("Intereses:",interests)
-                return render_template('create/amortization.html',title='Tabla de Amortización', loan = l,table=table,interests = interests)
-            except  Exception as ex:
-                flash("No se pudo generar la tabla de amortización"+str(ex))
+        print("Monto:",request.args.get('amount'))
+        
+        l = Loan(owner = request.args.get('owner'), 
+                interest_rate = float(request.args.get('interest_rate')),
+                base = int(request.args.get('base')),
+                balance = float(request.args.get('amount')),
+                length = int(request.args.get('length')),
+                id = 1)
+        
+        table, interests = l.generate_amortization_table()
+        print("Intereses:",interests)
+        return render_template('create/amortization.html',title='Tabla de Amortización', loan = l,table=table,interests = interests,range=range,len=len,float=float)
+    
             
-        except Exception as ex:
-            flash("No se pudo generar el objeto del préstamo\n\n"+str(ex))
+        
             
             
     return render_template('create/loan.html',title='Crear Préstamo', form = form,table=table,interests = interests)

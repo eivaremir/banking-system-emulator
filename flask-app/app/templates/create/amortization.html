@@ -6,7 +6,7 @@
 <div class="col-md-12 col-md-offset-1">
     <h3>Tabla de amortización</h3>
     <div class="container">
-        <ul class="list-group">
+        <ul class="list-group col-md-6">
             <li class="list-group-item active">Préstamo</li>
             <li class="list-group-item"><b>Capital: </b> {{loan.balance}}</li>
             <li class="list-group-item"><b>Interes Anual: </b>{{loan.interest_rate}}%</li>
@@ -15,9 +15,32 @@
           </ul>
     </div>
     <br>
+    
+    <table class="table">
+        <thead class="bg-dark text-white">
+          <tr>
+            <th scope="col">Month</th>
+            <th scope="col">Interest</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for i in range(len(table)) %}
+            <tr>
+                <th scope="row">{{i+1}}</th>
+                <td>{{"{:.2f}".format(float(table[i]))}}</td>
+            </tr>
+            {% endfor %}
+            <tr class="bg-dark text-white">
+                <th scope="row">Total</th>
+                <td>{{"{:.2f}".format(float(interests))}}</td>
+            </tr>
+        </tbody>    
+      </table>
+    
     <form action="" method="POST">
-        <button type="submit" class="btn btn-dark">Desembolsar</button>
+        <button type="submit" class="btn btn-primary">Desembolsar</button>
     </form>
+    
 </div>
 
 {%endblock%}
