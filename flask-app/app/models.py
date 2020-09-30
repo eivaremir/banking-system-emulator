@@ -5,7 +5,6 @@ from datetime import datetime
 import random
 import abc
 import string
-import numpy as np
 #from model.ipynb* import *
 try:
   from .functions import *
@@ -87,22 +86,16 @@ class Loan(Product):
     super().__init__(**kwargs)
     # duracion del prestamo en meses
     self.length = kwargs['length']
+    self.From = kwargs['From']
     self.type = self.__class__.__name__
     # base del calculo
     self.base = kwargs['base']
-
-  
-  def generate_amortization_table(self):
-    arr = np.array([])
-    for i in range(self.length):
-      arr = np.append(arr,(self.balance*(self.interest_rate/100)*30)/self.base)
-    return arr,arr.sum()
-
   def to_dict(self):
     d1 = super().to_dict()
     d2 = {
         "length":self.length,
         "base":self.base
+        "From": self.From
     }
     return {**d1,**d2}
 
@@ -244,6 +237,7 @@ class Transfer():
         global df_transactions
         df_transactions = df_transactions.append(trans1.to_dict(),ignore_index=True )
         df_transactions = df_transactions.append(trans2.to_dict(),ignore_index=True )
+        
         if kwargs['to'] == Product_in_loan(kwargs['to']):
           prodct1 = Product(
               id = kwargs['to'],
@@ -273,6 +267,7 @@ class Transfer():
           df_CreditCrad = df_CreditCrad.append(product2.to_dict(),ignore_index=True)
       else:
         print("No tienes saldo")
+
 
 
     
