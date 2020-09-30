@@ -223,10 +223,11 @@ class Transfer():
   
   @classmethod
   def Execute(self, **kwargs):
+    df_deposits = pd.read_csv(DATABASE_DIRECTORY+"deposits.csv")
     print("Executing Bank Transfer")
-    b1 = df_deposits[df_deposits['id']==kwargs['to']]
-
+    b1 = df_deposits.sort_values[==kwargs['to']]
     b2 = df_deposits[df_deposits['id']==kwargs['From']]
+    
     if len(b1) == 0 or len(b2) == 0:
       print('ERROR')
     else: 
@@ -256,8 +257,8 @@ class Transfer():
         df_transactions = df_transactions.append(trans1.to_dict(),ignore_index=True )
         df_transactions = df_transactions.append(trans2.to_dict(),ignore_index=True )
         
-        if kwargs['to'] == Product_in_loan(kwargs['to']):
-          prodct1 = Product(
+        
+        '''  prodct1 = Product(
               id = kwargs['to'],
               interest_rate = GetInteresLOANS(kwargs['to']),
               balance = totalb1,
@@ -282,7 +283,7 @@ class Transfer():
               id = kwargs['FROM'],
               interest_rate = GetInteresCC(kwargs['FROM']),
               balance = totalb2)
-          df_CreditCrad = df_CreditCrad.append(product2.to_dict(),ignore_index=True)
+          df_CreditCrad = df_CreditCrad.append(product2.to_dict(),ignore_index=True)'''
       else:
         print("No tienes saldo")
 
@@ -311,8 +312,7 @@ class User(UserMixin):
 
     def __str__(self):
         return self.username
-    
-    
+
     '''
     @classmethod
     def get_by_username(cls, username):
