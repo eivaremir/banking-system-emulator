@@ -108,21 +108,29 @@ def create(product):
     form = LoanCreationForm(request.form)
     table = []
     interests = 0.00
-    if bool(request.args.get('table')):
+    print(request.args.get('owner'))
+    if request.method == 'GET' and request.args.get('owner'):
         print("Generando Tabla de amortización")
-        print("Tasa:",form.interest_rate.data)
-        print("Monto:",form.amount.data)
-        try:
-            l = Loan(owner = form.owner.data, 
-                    interest_rate = float(form.interest_rate.data),
-                    base = form.base.data,
-                    balance = float(form.balance.data),
-                    length = int(form.length.data),
-                    id = 1)
-            table, interests = l.generate_amortization_table()
-        except:
-            flash("Ocurrió un error")
+        print("Tasa:",request.args.get('interest_rate'))
+        print("Monto:",request.args.get('amount'))
+        
+        l = Loan(owner = request.args.get('owner'), 
+                interest_rate = float(request.args.get('interest_rate')),
+                base = int(request.args.get('base')),
+                balance = float(request.args.get('amount')),
+                length = int(request.args.get('length')),
+                id = 1)
+        
+        table, interests = l.generate_amortization_table()
+        print("Intereses:",interests)
+        return render_template('create/amortization.html',title='Tabla de Amortización', loan = l,table=table,interests = interests,range=range,len=len,float=float)
+    
+            
+        
+            
+            
     return render_template('create/loan.html',title='Crear Préstamo', form = form,table=table,interests = interests)
+
 ##############################################################
 # FIN
 ##############################################################
