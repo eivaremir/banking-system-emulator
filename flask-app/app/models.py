@@ -94,7 +94,7 @@ class Loan(Product):
     d1 = super().to_dict()
     d2 = {
         "length":self.length,
-        "base":self.base
+        "base":self.base,
         "From": self.From
     }
     return {**d1,**d2}

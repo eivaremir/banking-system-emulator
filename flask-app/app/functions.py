@@ -128,17 +128,17 @@ def GetInteresCC(n):
 def Product_in_deposits(n):
   prod = df_deposits[df_deposits['id'] == n]
   prod = prod.reset_index()
-  prod = prod.iloc[0]['interest_rate']
+  prod = prod.iloc[0]['id']
   return str(prod) 
 
 def Product_in_loan(n):
   prod = df_loans[df_loans['id'] == n]
   prod = prod.reset_index()
-  prod = prod.iloc[0]['interest_rate']
+  prod = prod.iloc[0]['id']
   return str(prod)   
 
 def Product_in_CC(n): 
   prod = df_CreditCrad[df_CreditCrad['id'] == n]
   prod = prod.reset_index()
-  prod = prod.iloc[0]['interest_rate']
+  prod = prod.iloc[0]['id']
   return str(prod)
