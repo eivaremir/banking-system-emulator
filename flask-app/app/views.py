@@ -108,22 +108,34 @@ def create(product):
     form = LoanCreationForm(request.form)
     table = []
     interests = 0.00
-    print(request.args.get('owner'))
+    
+    if request.method == 'POST':
+
+        Loan.create_new_loan(Loan(
+            id = 2,
+            owner = request.args.get('owner'),
+            interest_rate = request.args.get('interest_rate'),
+            length = request.args.get('length'),
+            base = request.args.get('base'),
+            balance = request.args.get('amount'),
+            From = "DD/MM/YY",
+        ))
+
+        return redirect(url_for('.client',id=request.args.get('owner')))
+
     if request.method == 'GET' and request.args.get('owner'):
-        print("Generando Tabla de amortización")
-        print("Tasa:",request.args.get('interest_rate'))
-        print("Monto:",request.args.get('amount'))
         
         l = Loan(owner = request.args.get('owner'), 
                 interest_rate = float(request.args.get('interest_rate')),
                 base = int(request.args.get('base')),
                 balance = float(request.args.get('amount')),
                 length = int(request.args.get('length')),
+                From = "DD/MM/YY",
                 id = 1)
         
         table, interests = l.generate_amortization_table()
         print("Intereses:",interests)
-        return render_template('create/amortization.html',title='Tabla de Amortización', loan = l,table=table,interests = interests,range=range,len=len,float=float)
+        return render_template('create/amortization.html',title='Tabla de Amortización',loan = l,table=table,interests = interests,range=range,len=len,float=float)
     
             
         

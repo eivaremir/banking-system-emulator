@@ -5,6 +5,7 @@ from datetime import datetime
 import random
 import abc
 import string
+import numpy as np
 #from model.ipynb* import *
 try:
   from .functions import *
@@ -58,12 +59,14 @@ class Product(abc.ABC):
     df_deposits = pd.read_csv(DATABASE_DIRECTORY+"deposits.csv")
     df_loans = pd.read_csv(DATABASE_DIRECTORY+"loans.csv")
     id = kwargs['id']
-    
+    #print(df_loans)
+    #print(id)
+    #print(df_loan[df_loans.id == '1610960'])
     try: balance = df_deposits[df_deposits.id == id].iloc[0]['balance']
     except: pass
     try: balance = df_loans[df_loans.id == id].iloc[0]['balance']
     except: pass
-
+    
     return balance
 
 
@@ -90,6 +93,20 @@ class Loan(Product):
     self.type = self.__class__.__name__
     # base del calculo
     self.base = kwargs['base']
+  def generate_amortization_table(self):
+    arr = np.array([])
+    for i in range(self.length):
+      arr = np.append(arr,(self.balance*(self.interest_rate/100)*30)/self.base)
+    return arr,arr.sum()
+  
+  @classmethod
+  def create_new_loan(self, loan):
+    df_loans = pd.read_csv(DATABASE_DIRECTORY+"loans.csv")
+    df = pd.concat([df_loans, pd.DataFrame.from_records([loan.to_dict()])])
+    df = df.reset_index()
+    df = df.drop(['index'], axis=1)
+    df.to_csv(DATABASE_DIRECTORY+"loans.csv",index=False)
+
   def to_dict(self):
     d1 = super().to_dict()
     d2 = {
@@ -157,7 +174,8 @@ class Client():
                 owner = client_loans.iloc[i].owner,
                 length = client_loans.iloc[i].length,
                 base = client_loans.iloc[i].base,
-                type = client_loans.iloc[i].type
+                type = client_loans.iloc[i].type,
+                From = "DD/MM/YY"
         ))
     return client_products
     
