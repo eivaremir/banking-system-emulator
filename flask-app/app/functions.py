@@ -10,7 +10,7 @@ try:
 except:
   from models import *
   DATABASE_DIRECTORY = os.getcwd()+"/db/"
-
+df_transactions = pd.read_csv("db/transactions.csv")
 def load_clients():
   print("Getting Clients...")
   return pd.read_csv(DATABASE_DIRECTORY+"clients.csv")
@@ -39,7 +39,7 @@ def getAccountStatement(**kwargs):
   df = df.drop(['index'],axis=1)
   return df
 
-id_in_table = lambda s: s if (len(df_transactions[df_transactions['id']==s])) == 0 else prueba(random.choice(range(100000,999999)))
+id_in_table = lambda s: s if (len(df_transactions[df_transactions['id']==s])) == 0 else id_in_table(random.choice(range(100000,999999)))
 
 def generate_product_ids():
   id = ''

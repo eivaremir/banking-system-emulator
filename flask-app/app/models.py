@@ -16,7 +16,8 @@ except:
 #from flask_login import UserMixin
 df_transactions = pd.read_csv(DATABASE_DIRECTORY+'transactions.csv',parse_dates=['accounting_date'])
 df_deposits = pd.read_csv(DATABASE_DIRECTORY+"deposits.csv")
-
+df_loans = pd.read_csv(DATABASE_DIRECTORY+"loans.csv")
+df_CreditCards = pd.read_csv(DATABASE_DIRECTORY+"CreditCards.csv")
 
 def showPasswordHash(value):
     return generate_password_hash(value)
@@ -215,7 +216,7 @@ class Transaction():
 class Transfer():
   def __init__(self, **kwargs):
     self.to = kwargs['to']
-    self.From = kwargs['from']
+    self.From = kwargs['From']
     self.amount = kwargs['amount']
     self._id = kwargs['id']
 
@@ -233,45 +234,61 @@ class Transfer():
   
   @classmethod
   def Execute(self, **kwargs):
-    df_deposits = pd.read_csv(DATABASE_DIRECTORY+"deposits.csv")
+
+    df_deposits = pd.read_csv("db/deposits.csv")
+    '''df_transactions = pd.read_csv("db/transactions.csv")'''
+    #print(df_deposits)
+    '''df_deposits =  df_deposits[df_deposits['id'] == kwargs['to']]
+    print(df_deposits.head())'''
     print("Executing Bank Transfer")
-    b1 = df_deposits.sort_values[==kwargs['to']]
-    b2 = df_deposits[df_deposits['id']==kwargs['From']]
-    
-    if len(b1) == 0 or len(b2) == 0:
+    b1_deposits = df_deposits[df_deposits['id']==kwargs['to']]
+    b1_loans = df_loans[df_loans['id']==kwargs['to']]
+    b1_cards = df_CreditCards[df_CreditCards['id']==kwargs['to']]
+    b2_deposits = df_deposits[df_deposits['id']==kwargs['From']]
+
+    print(b1_loans, b1_cards)
+
+    if len(b1_deposits) == 0 or len(b2_deposits) == 0 or len(b1_loans) == 0 or len(b1_cards) == 0 :   
       print('ERROR')
-    else: 
-      b1 = b1.reset_index()
-      b1 = b1.iloc[0]['balance']
-      b2 = b2.reset_index()
-      b2 = b2.iloc[0]['balance']
-      print("Saldo disponible:",b2)
-      if b2 >= kwargs['amount']:
-        totalb1= b1 + kwargs['amount']
-        totalb2= b2 - kwargs['amount']
+      b1_deposits = b1_deposits.reset_index()
+      tipo1 = b1_deposits.iloc[0]['type']
+      b1_deposits = b1_deposits.iloc[0]['balance']
+      b2_deposits = b2_deposits.reset_index()
+      tipo2 = b2_deposits.iloc[0]['type']
+      b2_deposits = b2_deposits.iloc[0]['balance']
+      print("Saldo disponible:",b2_deposits)
+      print('tipo 1 {}, tipo2 {}'.format(tipo1, tipo2))
+      if b2_deposits >= kwargs['amount']:
+        totalb1_deposits= b1_deposits + kwargs['amount']
+        totalb2_deposits= b2_deposits - kwargs['amount']
         trans1= Transaction(
           id = id_in_table(random.choice(range(100000,999999))),
           product = kwargs['to'],
           nature = "Cr",
           date = datetime.now(),
-          amt = kwargs['amount'],
+          amt = totalb1_deposits,
           mvt = kwargs['amount'])
         trans2= Transaction(
           id = id_in_table(random.choice(range(100000,999999))),
           product = kwargs['From'],
           nature = "Dr",
           date = datetime.now(),
-          amt = kwargs['amount'],
+          amt = totalb2_deposits,
           mvt= kwargs['amount']*-1)
         global df_transactions
         df_transactions = df_transactions.append(trans1.to_dict(),ignore_index=True )
         df_transactions = df_transactions.append(trans2.to_dict(),ignore_index=True )
+        df_transactions = df_transactions.reset_index()
+        df_transactions = df_transactions.drop(['index'],axis=1)
+        df_transactions.to_csv("db/transactions.csv")
+
+        
         
         
         '''  prodct1 = Product(
               id = kwargs['to'],
               interest_rate = GetInteresLOANS(kwargs['to']),
-              balance = totalb1,
+              balance = totalb1_deposits,
               length = GetLengthLOANS(kwargs['to']),
               base = GetBaseLOANS(kwargs['to']))
           df_loans = df_loans.append(product1.to_dict(),ignore_index=True)
@@ -279,20 +296,20 @@ class Transfer():
           product1 = Product(
               id = kwargs['to'],
               interest_rate = GetInteres(kwargs['to']),
-              balance = totalb1)
+              balance = totalb1_deposits)
           df_deposits = df_deposits.append(product1.to_dict(),ignore_index=True)
 
         elif kwargs['FROM'] == Product_in_deposits(kwargs['FROM']):    
           product2 = Product(
               id = kwargs['FROM'],
               interest_rate = GetInteres(kwargs['FROM']),
-              balance = totalb2)
+              balance = totalb2_deposits)
           df_deposits = df_deposits.append(product2.to_dict(),ignore_index=True)
         elif kwargs['FROM'] == Product_in_CC(kwargs['FROM']): 
           product2 = Product(
               id = kwargs['FROM'],
               interest_rate = GetInteresCC(kwargs['FROM']),
-              balance = totalb2)
+              balance = totalb2_deposits)
           df_CreditCrad = df_CreditCrad.append(product2.to_dict(),ignore_index=True)'''
       else:
         print("No tienes saldo")
