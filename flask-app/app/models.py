@@ -107,6 +107,16 @@ class Loan(Product):
     df = df.drop(['index'], axis=1)
     df.to_csv(DATABASE_DIRECTORY+"loans.csv",index=False)
 
+  @classmethod
+  def change_client(self, client):
+    df_client = pd.read_csv(DATABASE_DIRECTORY+"clients.csv"):
+    df = df.loc[df["id"] == kwargs['id'] ]
+    df = new_df.reset_index(drop= True)
+    df = df.loc[0] = [var1,var2]
+    df.to_csv(DATABASE_DIRECTORY+"clientes.csv",index=False)
+     
+
+
   def to_dict(self):
     d1 = super().to_dict()
     d2 = {

@@ -1,0 +1,11 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\electron-app",
+    "\\flask-app",
+    "\\flask-app\\app",
+    "\\flask-app\\app\\db"
+  ],
+  "SelectedNode": "\\flask-app\\app\\models.py",
+  "PreviewInSolutionExplorer": false
+}
