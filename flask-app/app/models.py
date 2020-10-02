@@ -236,63 +236,155 @@ class Transfer():
   
   @classmethod
   def Execute(self, **kwargs):
-    
+    global df_transactions
+    df_deposits = pd.read_csv(DATABASE_DIRECTORY+"deposits.csv")
+    df_loans = pd.read_csv(DATABASE_DIRECTORY+"loans.csv")
+    df_CreditCards = pd.read_csv(DATABASE_DIRECTORY+"CreditCards.csv")
+
     print("Executing Bank Transfer")
     #Buscar del TO en las tablas 
     b1_deposits = df_deposits[df_deposits['id']==kwargs['to']]
     b1_loans = df_loans[df_loans['id']==kwargs['to']]
     b1_cards = df_CreditCards[df_CreditCards['id']==kwargs['to']]
-    print(b1_cards)
+  
     #BUSQUEDA DEL FROM EN DEPOSITO
     b2_deposits = df_deposits[df_deposits['id']==kwargs['From']]
     
-
     if len(b1_deposits) == 0 and len(b2_deposits) == 0:   
       print('ERROR 1')
     elif len(b1_loans) == 0 and len(b2_deposits) == 0:
       print('ERROR 2')
-
     elif len(b1_cards) == 0 and len(b2_deposits) == 0:
       print('ERROR 3')
+    
     else:
-      if GetType(b1_loans) == 'Loan':
-        print('soy prestamo')
-      elif GetType(b1_cards) == 'CreditCard':
-        print('soy tarjeta')
-      else: 
-        #RESET INDEX PARA TO Y FROM
-        b1_deposits = b1_deposits.reset_index()
-        b2_deposits = b2_deposits.reset_index()
-
-        #OBTENCION DEL BALANCE
-        b1_deposits = b1_deposits.iloc[0]['balance']
+      #RESET INDEX PARA TO Y FROM
+      b1_deposits = b1_deposits.reset_index(drop=True)
+      b1_loans = b1_loans.reset_index(drop=True)
+      b1_cards = b1_cards.reset_index(drop=True)
+      b2_deposits = b2_deposits.reset_index(drop=True)
+      if len(b1_loans) >= 1 :
+        print('soy prestamo') 
         b2_deposits = b2_deposits.iloc[0]['balance']
+        b1_loans = b1_loans.iloc[0]['balance']
+        if b2_deposits>=kwargs['amount']:
+          totalb1 = b1_loans + kwargs['amount']
+          totalb2= b2_deposits - kwargs['amount']
 
-        if b2_deposits >= kwargs['amount']:
-          totalb1_deposits= b1_deposits + kwargs['amount']
-          totalb2_deposits= b2_deposits - kwargs['amount']
+          #GUARDAR EL BALANCE EN LAS TABLAS 
+          df_loans.loc[df_loans['id']==kwargs['to'],'balance'] = totalb1
+          df_new = df_loans.drop(['Unnamed: 0'],axis=1)
+          
+          df_deposits.loc[df_deposits['id']==kwargs['From'],'balance'] = totalb2
+          df_new1 = df_deposits.drop(['Unnamed: 0'],axis=1)
+          print(df_new)
+          df_new.to_csv(DATABASE_DIRECTORY+"loans.csv")
+          df_new1.to_csv(DATABASE_DIRECTORY+"deposits.csv")
+
           trans1= Transaction(
             id = id_in_table(random.choice(range(100000,999999))),
             product = kwargs['to'],
             nature = "Cr",
             date = datetime.now(),
-            amt = totalb1_deposits,
+            amt = totalb1,
             mvt = kwargs['amount'])
           trans2= Transaction(
             id = id_in_table(random.choice(range(100000,999999))),
             product = kwargs['From'],
             nature = "Dr",
             date = datetime.now(),
-            amt = totalb2_deposits,
+            amt = totalb2,
             mvt= kwargs['amount']*-1)
-          global df_transactions
+          
           df_transactions = df_transactions.append(trans1.to_dict(),ignore_index=True )
           df_transactions = df_transactions.append(trans2.to_dict(),ignore_index=True )
           df_transactions = df_transactions.reset_index()
-          df_transactions = df_transactions.drop(['index'],axis=1)
-          df_transactions.to_csv("db/transactions.csv")
+          df_transactions = df_transactions.drop(['Unnamed: 0'],axis=1)
+          print(df_transactions)
+          #df_transactions.to_csv("db/transactions.csv")
+
+      elif len(b1_cards) >= 1 :
+        print('soy tarjeta')
+        b2_deposits = b2_deposits.iloc[0]['balance']
+        b1_cards = b1_cards.iloc[0]['balance']
+        if b2_deposits>=kwargs['amount']:
+          totalb1= b1_cards + kwargs['amount']
+          totalb2= b2_deposits - kwargs['amount']
+          print(totalb1_cards)
+
+          #GUARDAR CAMBIOS EN LAS TABLAS
+          df_CreditCards.loc[df_CreditCards['id']==kwargs['to'],'balance'] = totalb1
+          df_new = df_CreditCards.drop(['Unnamed: 0'],axis=1)
+          df_deposits.loc[df_deposits['id']==kwargs['From'],'balance'] = totalb2
+          df_new1 = df_deposits.drop(['Unnamed: 0'],axis=1)
+          print(df_new1)
+          df_new.to_csv(DATABASE_DIRECTORY+"CreditCrads.csv")
+          df_new1.to_csv(DATABASE_DIRECTORY+"deposits.csv")
+
+          trans1= Transaction(
+            id = id_in_table(random.choice(range(100000,999999))),
+            product = kwargs['to'],
+            nature = "Cr",
+            date = datetime.now(),
+            amt = totalb1,
+            mvt = kwargs['amount'])
+          trans2= Transaction(
+            id = id_in_table(random.choice(range(100000,999999))),
+            product = kwargs['From'],
+            nature = "Dr",
+            date = datetime.now(),
+            amt = totalb2,
+            mvt= kwargs['amount']*-1)
+          
+          df_transactions = df_transactions.append(trans1.to_dict(),ignore_index=True )
+          df_transactions = df_transactions.append(trans2.to_dict(),ignore_index=True )
+          df_transactions = df_transactions.reset_index()
+          df_transactions = df_transactions.drop(['Unnamed: 0'],axis=1)
+          print(df_transactions)
+          #df_transactions.to_csv("db/transactions.csv")
+      else: 
+        #OBTENCION DEL BALANCE
+        b1_deposits = b1_deposits.iloc[0]['balance']
+        b2_deposits = b2_deposits.iloc[0]['balance']
+
+        if b2_deposits >= kwargs['amount']:
+          totalb1= b1_deposits + kwargs['amount']
+          totalb2= b2_deposits - kwargs['amount']
+          #GRUARDAR EN DEPOSITO
+          df_deposits.loc[df_deposits['id']==kwargs['From'],'balance'] = totalb2
+          df_new1 = df_deposits.drop(['Unnamed: 0'],axis=1)
+          df_deposits.loc[df_deposits['id']==kwargs['to'],'balance'] = totalb1
+          df_new1 = df_deposits.drop(['Unnamed: 0'],axis=1)
+          df_new1.to_csv(DATABASE_DIRECTORY+"deposits.csv")
+
+          trans1= Transaction(
+            id = id_in_table(random.choice(range(100000,999999))),
+            product = kwargs['to'],
+            nature = "Cr",
+            date = datetime.now(),
+            amt = totalb1,
+            mvt = kwargs['amount'])
+          trans2= Transaction(
+            id = id_in_table(random.choice(range(100000,999999))),
+            product = kwargs['From'],
+            nature = "Dr",
+            date = datetime.now(),
+            amt = totalb2,
+            mvt= kwargs['amount']*-1)
+         
+          df_transactions = df_transactions.append(trans1.to_dict(),ignore_index=True )
+          df_transactions = df_transactions.append(trans2.to_dict(),ignore_index=True )
+          df_transactions = df_transactions.reset_index()
+          df_transactions = df_transactions.drop(['Unnamed: 0'],axis=1)
+          print(df_transactions)
+          #df_transactions.to_csv("db/transactions.csv")
         else:
           print("No tienes saldo")
+
+
+
+      
+        
 
 
 
