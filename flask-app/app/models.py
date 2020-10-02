@@ -250,6 +250,7 @@ class Transfer():
 
     if len(b1_deposits) == 0 or len(b2_deposits) == 0:   
       print('ERROR')
+    else:
       b1_deposits = b1_deposits.reset_index()
       tipo1 = b1_deposits.iloc[0]['type']
       b1_deposits = b1_deposits.iloc[0]['balance']
