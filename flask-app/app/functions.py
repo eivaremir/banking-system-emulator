@@ -95,50 +95,7 @@ def generate_balance():
   cash= ("${:5.2f}".format(n))
   return cash
 
-def GetBaseLOANS (n): 
-  base = df_loans[df_loans['id']==n]
-  base = base.reset_index()
-  base = base.iloc[0]['base']
-  return base
-
-def GetLengthLOANS (n):
-  length = df_loans[df_loans['id']==n]
-  length = length.reset_index()
-  length = length.iloc[0]['length']
-  return length
-
-def GetInteresLOANS (n):
-        interes = df_loans[df_loans['id'] == n]
-        interes = interes.reset_index()
-        interes = interes.iloc[0]['interest_rate']
-        return interes
-
-def GetInteres(n): 
-  interes = df_deposits[df_deposits['id'] == n]
-  interes = interes.reset_index()
-  interes = interes.iloc[0]['interest_rate']
-  return interes  
-
-def GetInteresCC(n):
-  interes = df_CreditCrad[df_CreditCrad['id'] == n]
-  interes = interes.reset_index()
-  interes = interes.iloc[0]['interest_rate']
-  return interes
-
-def Product_in_deposits(n):
-  prod = df_deposits[df_deposits['id'] == n]
-  prod = prod.reset_index()
-  prod = prod.iloc[0]['id']
-  return str(prod) 
-
-def Product_in_loan(n):
-  prod = df_loans[df_loans['id'] == n]
-  prod = prod.reset_index()
-  prod = prod.iloc[0]['id']
-  return str(prod)   
-
-def Product_in_CC(n): 
-  prod = df_CreditCrad[df_CreditCrad['id'] == n]
-  prod = prod.reset_index()
-  prod = prod.iloc[0]['id']
-  return str(prod)
+def GetType(n):
+  n = n.reset_index()
+  n = n.iloc[0]['type']
+  return n 

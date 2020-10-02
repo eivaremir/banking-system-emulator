@@ -186,10 +186,11 @@ class Client():
     if len(df_new) == 0:
       print('ERROR')
     else:
-      df_new = df_new.reset_index(drop=False)
-      nombre_usuario = df_new.iloc[0]['client_name']
-      df_new.loc[df_new['client_name']==nombre_usuario,'client_name'] = kwargs['client_name']
       df_new = df_new.reset_index(drop=True)
+      nombre_usuario = df_new.iloc[0]['client_name']
+      df_client.loc[df_client['client_name']==nombre_usuario,'client_name'] = kwargs['client_name']
+      df_new = df_client.drop(['Unnamed: 0'],axis=1)
+      print(df_new)
       df_new.to_csv(DATABASE_DIRECTORY+"clients.csv")
 
 class Transaction():
@@ -235,83 +236,63 @@ class Transfer():
   
   @classmethod
   def Execute(self, **kwargs):
-
-    df_deposits = pd.read_csv("db/deposits.csv")
     
     print("Executing Bank Transfer")
+    #Buscar del TO en las tablas 
     b1_deposits = df_deposits[df_deposits['id']==kwargs['to']]
     b1_loans = df_loans[df_loans['id']==kwargs['to']]
     b1_cards = df_CreditCards[df_CreditCards['id']==kwargs['to']]
+    print(b1_cards)
+    #BUSQUEDA DEL FROM EN DEPOSITO
     b2_deposits = df_deposits[df_deposits['id']==kwargs['From']]
+    
 
-    print(b1_loans, b1_cards)
+    if len(b1_deposits) == 0 and len(b2_deposits) == 0:   
+      print('ERROR 1')
+    elif len(b1_loans) == 0 and len(b2_deposits) == 0:
+      print('ERROR 2')
 
-    if len(b1_deposits) == 0 or len(b2_deposits) == 0:   
-      print('ERROR')
+    elif len(b1_cards) == 0 and len(b2_deposits) == 0:
+      print('ERROR 3')
     else:
-      b1_deposits = b1_deposits.reset_index()
-      tipo1 = b1_deposits.iloc[0]['type']
-      b1_deposits = b1_deposits.iloc[0]['balance']
-      b2_deposits = b2_deposits.reset_index()
-      tipo2 = b2_deposits.iloc[0]['type']
-      b2_deposits = b2_deposits.iloc[0]['balance']
-      print("Saldo disponible:",b2_deposits)
-      print('tipo 1 {}, tipo2 {}'.format(tipo1, tipo2))
-      if b2_deposits >= kwargs['amount']:
-        totalb1_deposits= b1_deposits + kwargs['amount']
-        totalb2_deposits= b2_deposits - kwargs['amount']
-        trans1= Transaction(
-          id = id_in_table(random.choice(range(100000,999999))),
-          product = kwargs['to'],
-          nature = "Cr",
-          date = datetime.now(),
-          amt = totalb1_deposits,
-          mvt = kwargs['amount'])
-        trans2= Transaction(
-          id = id_in_table(random.choice(range(100000,999999))),
-          product = kwargs['From'],
-          nature = "Dr",
-          date = datetime.now(),
-          amt = totalb2_deposits,
-          mvt= kwargs['amount']*-1)
-        global df_transactions
-        df_transactions = df_transactions.append(trans1.to_dict(),ignore_index=True )
-        df_transactions = df_transactions.append(trans2.to_dict(),ignore_index=True )
-        df_transactions = df_transactions.reset_index()
-        df_transactions = df_transactions.drop(['index'],axis=1)
-        df_transactions.to_csv("db/transactions.csv")
+      if GetType(b1_loans) == 'Loan':
+        print('soy prestamo')
+      elif GetType(b1_cards) == 'CreditCard':
+        print('soy tarjeta')
+      else: 
+        #RESET INDEX PARA TO Y FROM
+        b1_deposits = b1_deposits.reset_index()
+        b2_deposits = b2_deposits.reset_index()
 
-        
-        
-        '''
-         prodct1 = Product(
-              id = kwargs['to'],
-              interest_rate = GetInteresLOANS(kwargs['to']),
-              balance = totalb1_deposits,
-              length = GetLengthLOANS(kwargs['to']),
-              base = GetBaseLOANS(kwargs['to']))
-          df_loans = df_loans.append(product1.to_dict(),ignore_index=True)
-        elif kwargs['to'] == Product_in_deposits(kwargs['to']):
-          product1 = Product(
-              id = kwargs['to'],
-              interest_rate = GetInteres(kwargs['to']),
-              balance = totalb1_deposits)
-          df_deposits = df_deposits.append(product1.to_dict(),ignore_index=True)
+        #OBTENCION DEL BALANCE
+        b1_deposits = b1_deposits.iloc[0]['balance']
+        b2_deposits = b2_deposits.iloc[0]['balance']
 
-        elif kwargs['FROM'] == Product_in_deposits(kwargs['FROM']):    
-          product2 = Product(
-              id = kwargs['FROM'],
-              interest_rate = GetInteres(kwargs['FROM']),
-              balance = totalb2_deposits)
-          df_deposits = df_deposits.append(product2.to_dict(),ignore_index=True)
-        elif kwargs['FROM'] == Product_in_CC(kwargs['FROM']): 
-          product2 = Product(
-              id = kwargs['FROM'],
-              interest_rate = GetInteresCC(kwargs['FROM']),
-              balance = totalb2_deposits)
-          df_CreditCrad = df_CreditCrad.append(product2.to_dict(),ignore_index=True)'''
-      else:
-        print("No tienes saldo")
+        if b2_deposits >= kwargs['amount']:
+          totalb1_deposits= b1_deposits + kwargs['amount']
+          totalb2_deposits= b2_deposits - kwargs['amount']
+          trans1= Transaction(
+            id = id_in_table(random.choice(range(100000,999999))),
+            product = kwargs['to'],
+            nature = "Cr",
+            date = datetime.now(),
+            amt = totalb1_deposits,
+            mvt = kwargs['amount'])
+          trans2= Transaction(
+            id = id_in_table(random.choice(range(100000,999999))),
+            product = kwargs['From'],
+            nature = "Dr",
+            date = datetime.now(),
+            amt = totalb2_deposits,
+            mvt= kwargs['amount']*-1)
+          global df_transactions
+          df_transactions = df_transactions.append(trans1.to_dict(),ignore_index=True )
+          df_transactions = df_transactions.append(trans2.to_dict(),ignore_index=True )
+          df_transactions = df_transactions.reset_index()
+          df_transactions = df_transactions.drop(['index'],axis=1)
+          df_transactions.to_csv("db/transactions.csv")
+        else:
+          print("No tienes saldo")
 
 
 
