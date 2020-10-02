@@ -94,8 +94,3 @@ def generate_balance():
   n = random.choice(range(0,500000))
   cash= ("${:5.2f}".format(n))
   return cash
-
-def GetType(n):
-  n = n.reset_index()
-  n = n.iloc[0]['type']
-  return n 

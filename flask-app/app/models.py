@@ -15,6 +15,7 @@ except:
   DATABASE_DIRECTORY = os.getcwd()+"/db/"
 #from flask_login import UserMixin
 df_transactions = pd.read_csv(DATABASE_DIRECTORY+'transactions.csv',parse_dates=['accounting_date'])
+df_transactions = df_transactions.drop(['Unnamed: 0'],axis=1)
 df_deposits = pd.read_csv(DATABASE_DIRECTORY+"deposits.csv")
 df_loans = pd.read_csv(DATABASE_DIRECTORY+"loans.csv")
 df_CreditCards = pd.read_csv(DATABASE_DIRECTORY+"CreditCards.csv")
@@ -277,7 +278,8 @@ class Transfer():
           
           df_deposits.loc[df_deposits['id']==kwargs['From'],'balance'] = totalb2
           df_new1 = df_deposits.drop(['Unnamed: 0'],axis=1)
-          print(df_new)
+          #df_new1 = df_deposits.drop(['index'],axis=1)
+          #print(df_new)
           df_new.to_csv(DATABASE_DIRECTORY+"loans.csv")
           df_new1.to_csv(DATABASE_DIRECTORY+"deposits.csv")
 
@@ -298,10 +300,10 @@ class Transfer():
           
           df_transactions = df_transactions.append(trans1.to_dict(),ignore_index=True )
           df_transactions = df_transactions.append(trans2.to_dict(),ignore_index=True )
-          df_transactions = df_transactions.reset_index()
-          df_transactions = df_transactions.drop(['Unnamed: 0'],axis=1)
           print(df_transactions)
-          #df_transactions.to_csv("db/transactions.csv")
+          df_transactions.to_csv("db/transactions.csv")
+        else:
+          print("No tienes saldo")
 
       elif len(b1_cards) >= 1 :
         print('soy tarjeta')
@@ -310,15 +312,14 @@ class Transfer():
         if b2_deposits>=kwargs['amount']:
           totalb1= b1_cards + kwargs['amount']
           totalb2= b2_deposits - kwargs['amount']
-          print(totalb1_cards)
 
           #GUARDAR CAMBIOS EN LAS TABLAS
           df_CreditCards.loc[df_CreditCards['id']==kwargs['to'],'balance'] = totalb1
           df_new = df_CreditCards.drop(['Unnamed: 0'],axis=1)
           df_deposits.loc[df_deposits['id']==kwargs['From'],'balance'] = totalb2
           df_new1 = df_deposits.drop(['Unnamed: 0'],axis=1)
-          print(df_new1)
-          df_new.to_csv(DATABASE_DIRECTORY+"CreditCrads.csv")
+
+          df_new.to_csv(DATABASE_DIRECTORY+"CreditCards.csv")
           df_new1.to_csv(DATABASE_DIRECTORY+"deposits.csv")
 
           trans1= Transaction(
@@ -338,10 +339,10 @@ class Transfer():
           
           df_transactions = df_transactions.append(trans1.to_dict(),ignore_index=True )
           df_transactions = df_transactions.append(trans2.to_dict(),ignore_index=True )
-          df_transactions = df_transactions.reset_index()
-          df_transactions = df_transactions.drop(['Unnamed: 0'],axis=1)
           print(df_transactions)
-          #df_transactions.to_csv("db/transactions.csv")
+          df_transactions.to_csv("db/transactions.csv")
+        else:
+          print("No tienes saldo")
       else: 
         #OBTENCION DEL BALANCE
         b1_deposits = b1_deposits.iloc[0]['balance']
@@ -371,13 +372,11 @@ class Transfer():
             date = datetime.now(),
             amt = totalb2,
             mvt= kwargs['amount']*-1)
-         
+          
           df_transactions = df_transactions.append(trans1.to_dict(),ignore_index=True )
           df_transactions = df_transactions.append(trans2.to_dict(),ignore_index=True )
-          df_transactions = df_transactions.reset_index()
-          df_transactions = df_transactions.drop(['Unnamed: 0'],axis=1)
           print(df_transactions)
-          #df_transactions.to_csv("db/transactions.csv")
+          df_transactions.to_csv("db/transactions.csv")
         else:
           print("No tienes saldo")
 
