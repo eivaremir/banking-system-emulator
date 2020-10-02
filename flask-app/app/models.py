@@ -101,23 +101,12 @@ class Loan(Product):
     return arr,arr.sum()
   
   @classmethod
-  def create_new_loan(self, loan):
+  def create_new_loan(self, **kwargs):
     df_loans = pd.read_csv(DATABASE_DIRECTORY+"loans.csv")
     df = pd.concat([df_loans, pd.DataFrame.from_records([loan.to_dict()])])
     df = df.reset_index()
     df = df.drop(['index'], axis=1)
     df.to_csv(DATABASE_DIRECTORY+"loans.csv",index=False)
-
-  @classmethod
-  def change_client(self, client):
-    df_client = pd.read_csv(DATABASE_DIRECTORY+"clients.csv"):
-    df = df.loc[df["id"] == kwargs['id'] ]
-    df = new_df.reset_index(drop= True)
-    df = df.loc[0] = [var1,var2]
-    df.to_csv(DATABASE_DIRECTORY+"clientes.csv",index=False)
-     
-
-
   def to_dict(self):
     d1 = super().to_dict()
     d2 = {
@@ -189,7 +178,21 @@ class Client():
                 From = "DD/MM/YY"
         ))
     return client_products
-    
+  
+  @classmethod
+  def change_client(self, **kwargs):
+    df_client = pd.read_csv(DATABASE_DIRECTORY+"clients.csv")
+    df_new = df_client[df_client["id"] == kwargs['id']]
+    if len(df_new) == 0:
+      print('ERROR')
+    else:
+      df_new = df_new.reset_index(drop=False)
+      nombre_usuario = df_new.iloc[0]['client_name']
+      df_new.loc[df_new['client_name']==nombre_usuario,'client_name'] = kwargs['client_name']
+      
+      
+    '''
+    df_new.to_csv(DATABASE_DIRECTORY+"clientes.csv",index=False)  '''
 
 class Transaction():
   def __init__(self,**kwargs):
@@ -236,10 +239,7 @@ class Transfer():
   def Execute(self, **kwargs):
 
     df_deposits = pd.read_csv("db/deposits.csv")
-    '''df_transactions = pd.read_csv("db/transactions.csv")'''
-    #print(df_deposits)
-    '''df_deposits =  df_deposits[df_deposits['id'] == kwargs['to']]
-    print(df_deposits.head())'''
+    
     print("Executing Bank Transfer")
     b1_deposits = df_deposits[df_deposits['id']==kwargs['to']]
     b1_loans = df_loans[df_loans['id']==kwargs['to']]
@@ -248,7 +248,7 @@ class Transfer():
 
     print(b1_loans, b1_cards)
 
-    if len(b1_deposits) == 0 or len(b2_deposits) == 0 or len(b1_loans) == 0 or len(b1_cards) == 0 :   
+    if len(b1_deposits) == 0 or len(b2_deposits) == 0:   
       print('ERROR')
       b1_deposits = b1_deposits.reset_index()
       tipo1 = b1_deposits.iloc[0]['type']
