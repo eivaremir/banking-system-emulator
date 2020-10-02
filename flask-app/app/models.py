@@ -189,10 +189,8 @@ class Client():
       df_new = df_new.reset_index(drop=False)
       nombre_usuario = df_new.iloc[0]['client_name']
       df_new.loc[df_new['client_name']==nombre_usuario,'client_name'] = kwargs['client_name']
-      
-      
-    '''
-    df_new.to_csv(DATABASE_DIRECTORY+"clientes.csv",index=False)  '''
+      df_new = df_new.reset_index(drop=True)
+      df_new.to_csv(DATABASE_DIRECTORY+"clients.csv")
 
 class Transaction():
   def __init__(self,**kwargs):
@@ -285,8 +283,8 @@ class Transfer():
 
         
         
-        
-        '''  prodct1 = Product(
+        '''
+         prodct1 = Product(
               id = kwargs['to'],
               interest_rate = GetInteresLOANS(kwargs['to']),
               balance = totalb1_deposits,
