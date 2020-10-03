@@ -37,6 +37,14 @@ class LoanCreationForm(ProductCreationForm,Form):
     base = SelectField('Base',choices=[360,365])
     amount = StringField('Monto',[validators.length(min=1,message='El monto debe más de 1 caracter')])
 
+class ClientModificationForm(Form):
+    name = StringField('Nombre',[validators.length(min=1,message='El nuevo nombre es requerido')])
+    surname = StringField('Apellido',[validators.length(min=1,message='El nuevo apellido es requerido')])
+    
+class TransferForm(Form):
+    to = StringField('Cuenta beneficiaria',[validators.length(min=1,message='El nuevo nombre es requerido')])
+    From = StringField('Cuenta ordenante',[validators.length(min=1,message='El nuevo nombre es requerido')])
+
 '''
 class TaskForm(Form):
     title = StringField('Titulo',[

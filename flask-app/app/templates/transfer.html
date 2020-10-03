@@ -1,0 +1,32 @@
+{% extends 'layout.html' %}
+{% from 'helpers/_forms.html' import render_field %}
+
+{%block container%}
+
+<div class="col-md-12 col-md-offset-1">
+    <h3>Transferencias</h3>
+    <form action="" method="POST">
+        <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
+        <!-- INPUT QUE CONTIENE EL TOKEN, no poner espacios entre "_{}_" -->
+        <div class="container">
+            <div class="row">
+            
+            <div class="col-md form-group">
+                <!-- RENDER FIELDS WITH BOOTSTRAP CLASSES -->
+                {{ render_field(form.From, class='form-control',placeholder='12345678') }}
+
+            </div>
+
+            <div class="col-md form-group">
+                <!-- RENDER FIELDS WITH BOOTSTRAP CLASSES -->  
+                
+                {{ render_field(form.to, class='form-control', placeholder='12345678') }} 
+            </div>
+            </div>
+        </div>
+        
+        <button type="submit" class="btn btn-dark">Transferir</button>
+    </form>
+</div>
+
+{%endblock%}

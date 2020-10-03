@@ -55,7 +55,7 @@
                     <td>{{ len(Client.getClientProducts(client=clients.iloc[i].id ) )}}</td>
                     <td>
                         <a class="btn btn-primary" href="{{url_for('.client',id=clients.iloc[i].id )}}">Ver productos</a>
-                        <a class="btn btn-warning" href="{{url_for('.client',id=clients.iloc[i].id )}}">Mantenimiento de datos</a>
+                        <a class="btn btn-warning" href="{{url_for('.client',id=clients.iloc[i].id )}}/edit">Editar cliente</a>
                     </td>
                 </tr>
            

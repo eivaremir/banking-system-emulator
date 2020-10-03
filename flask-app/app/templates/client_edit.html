@@ -1,0 +1,25 @@
+{% extends 'layout.html' %}
+{% from 'helpers/_forms.html' import render_field %}
+{%block container%}
+<div class="col-md-12 col-md-offset-1">
+
+    
+    <h3>Editar Cliente: {{client.iloc[0].client_name}}</h3> 
+    <form action="" method="POST">
+
+        <!-- INPUT QUE CONTIENE EL TOKEN, no poner espacios entre "_{}_" -->
+        <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
+        <div class="form-group">
+            <!-- RENDER FIELDS WITH BOOTSTRAP CLASSES -->
+            {{ render_field(form.name, class='form-control', placeholder= client.iloc[0].client_name.split(" ")[0]) }}
+            
+        </div>
+        <div class="form-group">
+            <!-- RENDER FIELDS WITH BOOTSTRAP CLASSES -->   
+            {{ render_field(form.surname, class='form-control', placeholder= client.iloc[0].client_name.split(" ")[1]) }}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Enviar Datos</button>
+    </form>
+</div>
+{% endblock %}

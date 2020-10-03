@@ -3,7 +3,7 @@ from flask import render_template, request  # render form fields, handle server 
 from flask import flash
 from flask import redirect, url_for # funciones de redireccionamiento
 from flask import abort #lanzar error 404
-from .forms import AccountStatementForm, LoginForm, LoanCreationForm
+from .forms import AccountStatementForm, LoginForm, LoanCreationForm, ClientModificationForm, TransferForm
 
 #from .forms import LoginForm, RegisterForm, TaskForm
 #from .models import *
@@ -78,17 +78,47 @@ def index():
     return render_template('index.html',title='Inicio',active='index')
 
 
+@page.route("/transfer",methods=['POST','GET'])
+def transfer():
+
+    form = TransferForm(request.form)
+
+    if request.method == 'POST':
+        # CUANDO SE ENVIA EL FORMULARIO SE DEBE EJECUTAR LA TRANSFERENCIA
+        # LOS DATOS VIENEN DE FORM.FIELD.DATA DONDE FIELD ES EL NOMBRE DEL CAMPO DEFINIDO EN LA CLASE FORM
+        flash("FUNCIONALIDAD EN ESPERA DE IMPLEMENTACIÓN",'error')
+        return render_template("transfer.html",form = form)
+    else:
+        return render_template("transfer.html",form = form)
+    
+
+
+@page.route("/client/<id>/edit",methods=['POST','GET'])
 @page.route("/client/")
 @page.route("/client/<id>")
-@page.route("/client/<id>/edit")
 def client(id=0):
-    print(request.url)
+    if 'edit' in request.url:
+        
+        form = ClientModificationForm(request.form)
+
+        if request.method == 'POST':
+            # cambio datos
+            Client.change_client(id=id,client_name=form.name.data+" "+form.surname.data)
+
+            # retorno a la vista del cliente
+            flash('Datos editados satisfactoriamente')
+
+        client = Client.getClientData(client=id)
+        
+        
+        return render_template('client_edit.html',form=form,title="Clientes",active="client",client=client,id=id,int = int,range=range,len=len)
     if id == 0:
         
         return render_template('client.html',title="Clientes",active="client",clients=load_clients(),range=range,len=len,Client=Client)
     else:
         client = Client.getClientData(client=id)
         products = Client.getClientProducts(client=id)
+        
         
         return render_template('client.html',title="Clientes",active="client",client=client,id=id,products = products,int = int,Product = Product,range=range,len=len)
 @page.route('/statement',methods=['GET','POST'])
