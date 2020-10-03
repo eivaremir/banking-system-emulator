@@ -77,9 +77,12 @@ def index():
         return render_template('index.html',title='Inicio',active='index',user=current_user)
     return render_template('index.html',title='Inicio',active='index')
 
+
 @page.route("/client/")
 @page.route("/client/<id>")
+@page.route("/client/<id>/edit")
 def client(id=0):
+    print(request.url)
     if id == 0:
         
         return render_template('client.html',title="Clientes",active="client",clients=load_clients(),range=range,len=len,Client=Client)
@@ -143,97 +146,9 @@ def create(product):
             
     return render_template('create/loan.html',title='Crear Préstamo', form = form,table=table,interests = interests)
 
+
+
+
 ##############################################################
 # FIN
 ##############################################################
-@page.route("/profile")
-@login_required
-def profile():
-    return render_template("profile/view.html",user=current_user)
-
-@page.route("/profile/<int:profile_id>")
-@login_required
-def profile_id(profile_id):
-    user = User.query.get_or_404(profile_id)
-    return render_template("profile/view.html",user=user,active='profile')
-    
-
-
-
-@page.route("/tasks")
-@page.route("/tasks/<int:page>")
-@login_required
-def tasks(page=1,per_page=2):
-    
-    pagination = current_user.tasks.paginate(page,per_page)
-    tasks = pagination.items
-    print('Auth: '+str(current_user.is_authenticated))
-    return render_template('task/list.html', title="Tasks",tasks=tasks,pagination=pagination, page=page, active='tasks')
-
-@page.route("/tasks/new", methods=['GET','POST'])
-@login_required
-def new_task():
-    form = TaskForm(request.form)
-    if request.method == 'POST':
-        if form.validate():
-            task = Task.create_element(form.title.data,form.description.data,current_user.id)
-            if task:
-                flash(TASK_CREATED)
-    return render_template('task/new.html',title='Nueva Tarea',form=form, active='new_task')
-
-@page.route("/tasks/delete/<int:task_id>")
-@login_required
-def delete_task(task_id):
-    task = Task.query.get_or_404(task_id)
-    
-    # if the task wasnt created by the user logged in
-    if task.user_id != current_user.id:
-        abort(404)
-    if task.delete_element(task.id):
-        flash(TASK_DELETED)
-    return redirect(url_for('.tasks'))
-
-@page.route("/tasks/edit/<int:task_id>", methods=['GET','POST'])
-@login_required
-def edit_task(task_id):
-    # obtener la información del task a partir del id
-    task = Task.query.get_or_404(task_id)
-
-    # solo el dueño de la tarea puede editar la tarea
-    if task.user_id != current_user.id:
-        abort(404)
-
-    # instanciar el formulario
-    form = TaskForm(request.form,obj=task)
-    if request.method == 'POST' and form.validate():
-        task = Task.update_element(task.id, form.title.data, form.description.data)
-        if task: flash(TASK_UPDATED)
-    return render_template("task/edit.html",title="Editar Tarea", form=form)
-
-@page.route("/tasks/show/<int:task_id>")
-def get_task(task_id):
-    task = Task.query.get_or_404(task_id)
-    return render_template("task/show.html", methods=['GET','SHOW'],title="Tarea #"+str(task_id),task=task)
-
-@page.route("/register",methods=['GET','POST'])
-def register():
-    form = RegisterForm(request.form) 
-    if request.method == 'POST' and form.validate(): 
-        try:
-          
-            user = User.create_element(form.username.data,form.password.data,form.email.data)
-            welcome_mail(user)
-            flash(USER_CREATED)
-            #print('Usuario '+str(user.id)+' Creado de forma exitosa')
-            
-            login_user(user)
-            
-            if current_user.is_authenticated:
-                return redirect(url_for('.tasks'))
-        except exc.IntegrityError:
-            flash(ERROR_USER_DUPLICATE,'error')
-        
-        
-    print('Auth: '+str(current_user.is_authenticated))
-    return render_template("register.html",title='Register', form=form, active='register')    
-
