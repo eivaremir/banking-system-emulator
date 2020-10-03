@@ -10,7 +10,7 @@ try:
 except:
   from models import *
   DATABASE_DIRECTORY = os.getcwd()+"/db/"
-df_transactions = pd.read_csv("db/transactions.csv")
+
 def load_clients():
   print("Getting Clients...")
   return pd.read_csv(DATABASE_DIRECTORY+"clients.csv")
