@@ -1,15 +1,14 @@
 <!doctype html>
+{% extends 'bootstrap/base.html' %}
+
 <html lang="en">
     <head>
         {% block head %}
         <!-- Required meta tags -->
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        {{ super() }}
 
-        {% block styles %}
-            <!-- Bootstrap CSS -->
-            {{ bootstrap.load_css() }}
-        {% endblock %}
 
         <title>{{title}}</title>
         {% endblock %}
@@ -20,9 +19,6 @@
         <!-- Your page content -->
         {% block content %}{% endblock %}
 
-        {% block scripts %}
-            <!-- Optional JavaScript -->
-            {{ bootstrap.load_js() }}
-        {% endblock %}
+
     </body>
 </html>

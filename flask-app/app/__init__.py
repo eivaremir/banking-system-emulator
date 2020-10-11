@@ -12,7 +12,7 @@ app = Flask(__name__)
 
 
 
-bootstrap = Bootstrap(app)
+bootstrap = Bootstrap()
 #mail = Mail()
 csrf = CSRFProtect() # PROTECCION CONTRA ATAQUES CSRF
 #db = SQLAlchemy() # instancia database
@@ -41,7 +41,7 @@ def create_app(config):
 
     #asignacion de bootstrap
     #if not app.config.get('TEST',False):
-    #bootstrap.init_app(app)
+    bootstrap.init_app(app)
 
     app.app_context().push()
     #login manager - flask-login
