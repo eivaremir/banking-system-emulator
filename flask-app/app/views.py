@@ -85,12 +85,14 @@ def transfer():
 
     if request.method == 'POST':
         # CUANDO SE ENVIA EL FORMULARIO SE DEBE EJECUTAR LA TRANSFERENCIA
+        Transfer.Execute(to=form.to,From=form.From, amount=form.amount, id=2)
+        
         # LOS DATOS VIENEN DE FORM.FIELD.DATA DONDE FIELD ES EL NOMBRE DEL CAMPO DEFINIDO EN LA CLASE FORM
-        flash("FUNCIONALIDAD EN ESPERA DE IMPLEMENTACIÓN",'error')
+        flash("Transferencia realizada exitosa mente")
         return render_template("transfer.html",form = form)
     else:
         return render_template("transfer.html",form = form)
-    
+
 
 
 @page.route("/client/<id>/edit",methods=['POST','GET'])

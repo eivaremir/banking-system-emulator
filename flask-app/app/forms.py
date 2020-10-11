@@ -44,6 +44,7 @@ class ClientModificationForm(Form):
 class TransferForm(Form):
     to = StringField('Cuenta beneficiaria',[validators.length(min=1,message='El nuevo nombre es requerido')])
     From = StringField('Cuenta ordenante',[validators.length(min=1,message='El nuevo nombre es requerido')])
+    amount = StringField('Monto',[validators.length(min=1,message='El monto es requerido')])
 
 '''
 class TaskForm(Form):
